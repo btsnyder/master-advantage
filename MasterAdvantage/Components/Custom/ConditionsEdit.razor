@@ -1,0 +1,52 @@
+﻿<MudBadge Content="@Item.Conditions.Count" Overlap="true" Color="@(Item.Conditions.Any() ? Color.Error : Color.Default)">
+    <MudMenu Icon="@Icons.Material.Filled.Coronavirus" Variant="Variant.Text" Color="Color.Info">
+        <div class="d-flex flex-column pa-1">
+            <div class="d-flex">
+                <MudAutocomplete T="string" Value="conditionSearch" ValueChanged="ValueChanged" SearchFunc="@(async(value, token) => await Task.Run(() => ConditionSearch(value, token)))"
+                                 AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Class="ma-2" />
+            </div>
+            @foreach (var condition in Item.Conditions)
+            {
+                <MudButton OnClick="@(() => RemoveCondition(condition))" Color="Color.Error">@condition</MudButton>
+            }
+        </div>
+    </MudMenu>
+</MudBadge>
+
+@code {
+    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EventCallback EncounterItemUpdated { get; set; }
+
+    private string conditionSearch { get; set; } = "";
+    void ValueChanged(string value)
+    {
+        if (conditions.Contains(value))
+        {
+            Item.Conditions.Add(value);
+            EncounterItemUpdated.InvokeAsync();
+        }
+    }
+    private IEnumerable<string> options { get; set; } = new HashSet<string>() { };
+
+    private string[] conditions =
+    {
+        "Bleeding", "Blinded", "Burning", "Charmed", "Dazed", "Deafened", "Doomed",
+        "Exhaustion", "Exposed", "Frightened", "Grappled", "Hindered", "Impaired",
+        "Incapacitated", "Intimidated", "Invisible", "Paralyzed", "Petrified", "Poisoned",
+        "Prone", "Rattled", "Restrained", "Slowed", "Stunned", "Surprised", "Taunted"
+    };
+
+    private IEnumerable<string> ConditionSearch(string value, CancellationToken token)
+    {
+        // if text is null or empty, don't return values (drop-down will not open)
+        if (string.IsNullOrEmpty(value))
+            return new string[0];
+        return conditions.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    void RemoveCondition(string condition)
+    {
+        Item.Conditions.Remove(condition);
+        EncounterItemUpdated.InvokeAsync(); 
+    }
+}

@@ -1,0 +1,45 @@
+﻿<MudPaper Class="pa-2 my-4 mud-background-gray">
+    <MudCardContent>
+        @foreach (var trade in Character.Trades)
+        {
+            <div class="mb-2 d-flex">
+                <MudRating @bind-SelectedValue="trade.Mastery" Class="my-auto" Size="Size.Large" EmptyIconColor="Color.Default" FullIconColor="Color.Primary" 
+                        FullIcon="@Icons.Material.Filled.Circle" EmptyIcon="@Icons.Material.Outlined.Circle"/>
+                <MudSelect Class="ms-2" Style="width: 150px;" @bind-Value="trade.Attribute" Variant="Variant.Outlined" Dense="true" Clearable=true>
+                    <MudSelectItem Value="nameof(Character.Might)">
+                        <div class="d-flex">
+                            <MudIcon Class="me-2 my-auto" Icon="@Icons.Material.Filled.FitnessCenter" />
+                            <MudText Class="my-auto" Typo="Typo.h6">MIG</MudText>
+                        </div>
+                    </MudSelectItem>
+                    <MudSelectItem Value="nameof(Character.Agility)">
+                        <div class="d-flex">
+                            <MudIcon Class="me-2 my-auto" Icon="@Icons.Material.Filled.DirectionsRun" />
+                            <MudText Class="my-auto" Typo="Typo.h6">AGI</MudText>
+                        </div>
+                    </MudSelectItem>
+                    <MudSelectItem Value="nameof(Character.Charisma)">
+                        <div class="d-flex">
+                            <MudIcon Class="me-2 my-auto" Icon="@Icons.Material.Filled.RecordVoiceOver" />
+                            <MudText Class="my-auto" Typo="Typo.h6">CHA</MudText>
+                        </div>
+                    </MudSelectItem>
+                    <MudSelectItem Value="nameof(Character.Intelligence)">
+                        <div class="d-flex">
+                            <MudIcon Class="me-2 my-auto" Icon="@Icons.Material.Filled.Book" />
+                            <MudText Class="my-auto" Typo="Typo.h6">INT</MudText>
+                        </div>
+                    </MudSelectItem>
+                </MudSelect>
+                <MudPaper Outlined="true" Class="d-flex ms-2">
+                    <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h6" Class="my-auto mx-auto">@trade.GetValue()</MudText>
+                </MudPaper>
+                <MudTextField Class="my-auto ms-2" Typo="Typo.h6" @bind-Value="trade.Name"/>
+            </div>
+        }
+    </MudCardContent>
+</MudPaper>
+
+@code {
+    [Parameter] public Character Character { get; set; }
+}

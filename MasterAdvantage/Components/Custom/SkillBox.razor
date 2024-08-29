@@ -1,0 +1,9 @@
+﻿<MudCheckBox @onclick="Clicked" Value="@(Helpers.GetPropertyByName<int>(Character, Name) >= Value)" Disabled="@(Value > Character.SkillMasteryLimit)" Color="Color.Primary" UncheckedColor="Color.Default" CheckedIcon="@Icons.Material.Filled.Circle" UncheckedIcon="@Icons.Material.Outlined.Circle"/>
+
+
+@code {
+    [Parameter] public int Value { get; set; }
+    [Parameter] public string Name { get; set; }
+    [Parameter] public Character Character { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> Clicked { get; set;}
+}

@@ -1,0 +1,67 @@
+﻿<MudPaper Class="pa-4 my-4 mud-background-gray">
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="4">
+                <div class="d-flex">
+                    <MudText Align="Align.Left" Typo="Typo.h5" Class="flex-1 my-auto">@Attribute</MudText>
+                    @if (Attribute != nameof(Character.Prime) && character != null)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="@(Helpers.GetPropertyByName<bool>(character, Attribute + "Save") ? Color.Tertiary : Color.Default)" OnClick="SaveClicked">
+                            <MudText Typo="Typo.h6">Save: @GetSave()</MudText>
+                        </MudButton>
+                    }
+                </div>
+                <MudCard Class="my-4" Outlined="true">
+                    <MudCardContent Class="d-flex">
+                        <MudText Class="flex-1" Typo="Typo.h4" Align="Align.Center">@(Helpers.GetPropertyByName<int>(Creature, Attribute))</MudText>
+                        @if (Attribute != nameof(Character.Prime))
+                        {
+                            <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Add" OnClick="@(() => AttributeChanged(true))"/>
+                            <MudIconButton Class="ms-1" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Remove" OnClick="@(() => AttributeChanged(false))" />
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="8">
+                @if (character != null)
+                {
+                    @foreach (var skill in character.AttributeSkills[Attribute])
+                    {
+                        <Skill Character="character" Name="@skill"/>
+                    }
+                }
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudPaper>
+
+
+@code {
+    private Character? character => Creature?.GetType() == typeof(Character) ? (Character)Creature : null;
+    [Parameter] public Creature Creature { get; set; }
+    [Parameter] public string Attribute { get; set; }
+
+    int GetSave()
+    {
+        int attribute = Helpers.GetPropertyByName<int>(character, Attribute);
+        bool save = Helpers.GetPropertyByName<bool>(character, Attribute + "Save");
+
+        return attribute + (save ? 1 : 0);
+    }
+
+    void AttributeChanged(bool positive)
+    {
+        int current = Helpers.GetPropertyByName<int>(Creature, Attribute);
+        if (positive)
+            current++;
+        else
+            current--;
+        Helpers.SetProperty<int>(Creature, Attribute, current);
+    }
+
+    void SaveClicked()
+    {
+        bool current = Helpers.GetPropertyByName<bool>(character, Attribute + "Save");
+        Helpers.SetProperty<bool>(character, Attribute + "Save", !current);
+    }
+}

@@ -1,0 +1,48 @@
+﻿@using System.Reflection;
+
+<MudDropZone T="DropItem" Identifier="@Identifier" Class="rounded-lg border-2 border-solid mud-border-lines-default mud-background-gray pa-6 ma-8 flex-grow-1" CanDrop="IsAvailable">
+    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-4">@Identifier</MudText>
+    @if (Identifier != "Pool")
+    {
+        <MudCard Class="my-4" Outlined="true">
+            <MudCardContent>
+                <MudText Align="Align.Center" Typo="Typo.h4">@CalculateSum()</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+</MudDropZone>
+
+@code {
+    [Parameter] public string Identifier { get; set; } = "";
+    [Parameter] public List<DropItem> Items { get; set; } = new();
+    [Parameter] public Character Character { get; set; } = new();
+
+    string CalculateSum()
+    {
+        int total = 0;
+        foreach (DropItem item in Items.Where(i => i.Idenifier == Identifier))
+        {
+            if (item.Name.StartsWith('+'))
+                total += int.Parse(item.Name.TrimStart('+'));
+            else
+                total += int.Parse(item.Name);
+        }
+        PropertyInfo? prop = Character.GetType().GetProperty(Identifier);
+        if (prop != null)
+        {
+            prop.SetValue(Character, total);
+        }
+        return total.ToString();
+    }
+
+    bool IsAvailable(DropItem item)
+    {
+        if (Identifier == "Pool")
+            return true;
+        if (CalculateSum() == "3")
+            return false;
+        if (!item.IsPlus() && Items.Any(i => i.Idenifier == Identifier && !item.IsPlus()))
+            return false;
+        return true;
+    }
+}

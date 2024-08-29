@@ -1,0 +1,60 @@
+﻿<MudTd DataLabel="Init">
+    <MudTextField Style="font-size: 30px;" Typo="@textSize" @bind-Value="Item.Initiative" Required />
+</MudTd>
+<MudTd>
+    <MudAvatar>
+        <MudImage Src="@("images/" + Item.Creature.ImageSrc)" />
+    </MudAvatar>
+</MudTd>
+<MudTd DataLabel="Name">
+    <MudTextField Typo="@textSize" @bind-Value="Item.Creature.Name" Required />
+</MudTd>
+<MudTd DataLabel="Player Name">
+    @if (Item.Character != null)
+    {
+        <MudTextField Typo="@textSize" @bind-Value="Item.Character.PlayerName" />
+    }
+</MudTd>
+<MudTd DataLabel="PD">
+    <MudNumericField Style="font-size: 30px;" @bind-Value="Item.Creature.PD" Required />
+</MudTd>
+<MudTd DataLabel="MD">
+    <MudNumericField Style="font-size: 30px;" @bind-Value="Item.Creature.MD" Required />
+</MudTd>
+<MudTd DataLabel="Conditions" />
+<MudTd DataLabel="HP">
+    <div class="d-flex">
+        <MudNumericField Typo="@textSize" Class="me-4" Style="font-size: 30px;" @bind-Value="Item.CurrentHP" Required Max="Item.Creature.MaxHP" />
+        <MudText Typo="@textSize">/</MudText>
+        <MudNumericField Typo="@textSize" Class="ms-4" Style="font-size: 30px;" @bind-Value="Item.Creature.MaxHP" Required />
+    </div>
+</MudTd>
+<MudTd DataLabel="Action Points">
+    <div class="d-flex">
+        @if (Item.Creature.ActionPoints >= 1)
+        {
+            <MudIconButton Class="mx-1" Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => Item.Creature.ActionPoints--)" />
+
+        }
+        @if (Item.Creature.ActionPoints >= 2)
+        {
+            <MudIconButton Class="mx-1" Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => Item.Creature.ActionPoints--)" />
+        }@if (Item.Creature.ActionPoints >= 3)
+        {
+            <MudIconButton Class="mx-1" Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => Item.Creature.ActionPoints--)" />
+
+        }@if (Item.Creature.ActionPoints >= 4)
+        {
+            <MudIconButton Class="mx-1" Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@(() => Item.Creature.ActionPoints--)" />
+        }
+        <MudIconButton Class="mx-1" Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="@(() => Item.Creature.ActionPoints++)" />
+    </div>
+</MudTd>
+<MudTd />
+<MudTd />
+
+@code {
+    private Typo textSize = Typo.h4;
+    [Parameter] public EncounterItem Item { get; set; }
+
+}

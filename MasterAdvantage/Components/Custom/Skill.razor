@@ -1,0 +1,31 @@
+﻿@using System.Reflection;
+
+<div class="d-flex my-2">
+    <MudRating SelectedValue="@(Helpers.GetPropertyByName<int>(Character, Name + "Mastery"))" SelectedValueChanged="MasteryChanged" Class="my-auto" Size="Size.Large" 
+        EmptyIconColor="Color.Default" FullIconColor="Color.Primary" FullIcon="@Icons.Material.Filled.Circle" EmptyIcon="@Icons.Material.Outlined.Circle" />
+    <MudPaper Class="mx-4 px-4 d-flex" Outlined="true" Width="50px">
+        <MudText Typo="Typo.h6" Class="my-auto">@(Helpers.GetPropertyByName<int>(Character, Name))</MudText>
+    </MudPaper>
+    @if (Name == nameof(Character.CustomKnowledge1))
+    {
+        <MudTextField @bind-Value="Character.CustomKnowledge1Name" Variant="Variant.Outlined"></MudTextField>
+    }
+    else if (Name == nameof(Character.CustomKnowledge2))
+    {
+        <MudTextField @bind-Value="Character.CustomKnowledge1Name" Variant="Variant.Outlined"></MudTextField>
+    }
+    else
+    {
+        <MudText Class="my-auto" Typo="Typo.h6">@Name</MudText>
+    }
+</div>
+
+@code {
+    [Parameter] public Character Character { get; set; } = new();
+    [Parameter] public string Name { get; set; } = "";
+
+    void MasteryChanged(int value)
+    {
+        Helpers.SetProperty<int>(Character, Name + "Mastery", value);
+    }
+}

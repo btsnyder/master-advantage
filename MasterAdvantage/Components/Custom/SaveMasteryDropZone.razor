@@ -1,0 +1,18 @@
+﻿<MudDropZone T="DropItem" Identifier="@Identifier" Class="rounded-lg border-2 border-solid mud-border-lines-default mud-background-gray pa-6 ma-8 flex-grow-1" CanDrop="IsAvailable">
+    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-4">@Identifier</MudText>
+</MudDropZone>
+
+@code {
+    [Parameter] public string Identifier { get; set; } = "";
+    [Parameter] public List<DropItem> Items { get; set; } = new();
+
+
+    bool IsAvailable(DropItem item)
+    {
+        if (Identifier == "Pool")
+            return true;
+        if (Items.Any(i => i.Idenifier == Identifier))
+            return false;
+        return true;
+    }
+}

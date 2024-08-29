@@ -1,0 +1,46 @@
+﻿@if (GMView)
+{
+    <div class="d-flex">
+        <MudNumericField T="int" Typo="@TextSize" Class="me-4" Style="font-size: 30px;" Value="Item.CurrentHP" ValueChanged="CurrentHPChanged" Required Max="Item.Creature.MaxHP" />
+        <MudText Typo="@TextSize">/</MudText>
+        <MudText Typo="@TextSize" Class="ms-4" Style="font-size: 30px;">@Item.Creature.MaxHP</MudText>
+    </div>
+}
+else if (!Item.IsNPC)
+{
+    <div class="d-flex">
+        <MudText Typo="@TextSize" Class="me-4">@Item.CurrentHP</MudText>
+        <MudProgressLinear Class="my-auto" Color="@GetHealthColor()" Rounded="true" Size="Size.Large" Value="@Item.CurrentHP" Max="@Item.Creature.MaxHP" />
+        <MudText Typo="@TextSize" Class="ms-4">@Item.Creature.MaxHP</MudText>
+    </div>
+}
+else
+{
+    <MudChip T="string" Color="@GetHealthColor()" Class="d-flex flex-grow-1" />
+}
+
+@code {
+    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public bool GMView { get; set; }
+    [Parameter] public Typo TextSize { get; set; }
+    [Parameter] public EventCallback EncounterItemChanged { get; set; }
+
+    Color GetHealthColor()
+    {
+        switch ((double)Item.CurrentHP / Item.Creature.MaxHP)
+        {
+            case > .5:
+                return Color.Success;
+            case > .25:
+                return Color.Warning;
+            default:
+                return Color.Error;
+        }
+    }
+
+    void CurrentHPChanged(int value)
+    {
+        Item.CurrentHP = value;
+        EncounterItemChanged.InvokeAsync();
+    }
+}

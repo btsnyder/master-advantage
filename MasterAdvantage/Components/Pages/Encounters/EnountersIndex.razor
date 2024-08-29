@@ -1,0 +1,187 @@
+﻿@page "/encounters"
+@inject DBService db
+@inject ISnackbar Snackbar
+@implements IDisposable
+@using System.Timers;
+
+<MudTable T="EncounterItem" Items="encounter.Items.Where(i => gmView || !i.Hidden).OrderByDescending(i => i.Initiative)" ApplyButtonPosition="TableApplyButtonPosition.End" EditButtonPosition="TableEditButtonPosition.End" 
+        EditTrigger="TableEditTrigger.EditButton" Class="mb-4" OnCommitEditClick="SaveEncounter" RowClassFunc="@((encounter, index) => encounter.RowClass)">
+    <ColGroup>
+        <col style="width:5%" />
+        <col style="width:50px;" />
+        <col />
+        <col />
+        <col style="width:5%" />
+        <col style="width:5%" />
+        <col style="width:5%" />
+        <col style="width:10%" />
+        <col style="width:150px;" />
+        <col style="width:50px;" />
+        <col style="width:50px;" />
+        <col style="width:50px;" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>
+            Init
+            <MudToggleIconButton Toggled="@editInitative" ToggledChanged="InitativeToggled" Size="Size.Small" Class="my-auto" 
+                                     Icon="@Icons.Material.Filled.Edit" 
+                                     ToggledIcon="@Icons.Material.Filled.Check" ToggledColor="@Color.Success"/>
+        </MudTh>
+        <MudTh />
+        <MudTh>Name</MudTh>
+        <MudTh>Player Name</MudTh>
+        <MudTh>PD</MudTh>
+        <MudTh>MD</MudTh>
+        <MudTh>Conditions</MudTh>
+        <MudTh>HP</MudTh>
+        <MudTh>Action Points</MudTh>
+        <MudTh />
+        <MudTh />
+    </HeaderContent>
+    <RowTemplate>
+        <EnounterItemViewRow Item="context" EditInitative="editInitative" GMView="gmView" CreatureCopied="CopyCreature" CreatureRemoved="@((item) => RemoveCreature(item))"
+            EncounterItemUpdated="SaveEncounter" ViewPersonClicked="ViewPersonClicked"/>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <EncounterItemEditRow Item="context" />
+    </RowEditingTemplate>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" />
+    </EditButtonContent>
+</MudTable>
+<div class="d-flex">
+    <MudSwitch @bind-Value="gmView" Color="Color.Info" Class="my-auto">GM View</MudSwitch>
+    <MudSwitch @bind-Value="autoSave" Color="Color.Info" Class="my-auto">Auto Save</MudSwitch>
+    <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto">Auto Load</MudSwitch>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="my-auto" @onclick="SaveEncounter">
+        Save
+    </MudButton>
+    <MudSpacer/>
+    <MudSpacer />
+    <MudSpacer />
+    <MudAutocomplete T="string" @bind-Value="creatureSearch" SearchFunc="CreatureSearch" CoerceValue="true" CoerceText="false"
+                     AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Class="my-2 me-6" />
+    <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
+</div>
+<MudOverlay @bind-Visible="_overlayVisible" DarkBackground>
+    <CreatureEditCard Creature="editCreature" CardClosed="CardClosed"/>
+</MudOverlay>
+
+
+@code {
+    private Timer _timer = new Timer(1000);
+    private Typo textSize = Typo.h4;
+    private bool _overlayVisible;
+    private bool editInitative;
+    private bool gmView;
+    private bool autoSave;
+    private bool autoLoad;
+    private string creatureSearch = "";
+    private Creature? editCreature;
+    private Encounter encounter = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _timer.Elapsed += OnTimerElapsed;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
+            encounter.Id = Guid.Empty;
+            await RefreshEncounter();
+        }
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        InvokeAsync(async () =>
+        {
+            if (autoSave)
+                await SaveEncounter();
+            if (autoLoad)
+                await RefreshEncounter();
+        });
+    }
+
+    private async Task SaveEncounter()
+    {
+        await db.UpdateEncounterAsync(encounter);
+        Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
+    }
+
+    private async Task RefreshEncounter()
+    {
+        if (encounter.Id == Guid.Empty)
+            encounter = db.GetEncounters().First();
+        else
+            encounter = await db.GetEncounter(encounter.Id);
+        StateHasChanged();
+    }
+
+    async Task CopyCreature(EncounterItem item)
+    {
+        EncounterItem newItem = new();
+        newItem.Creature = item.Creature;
+        encounter.Items.Add(newItem);
+        await SaveEncounter();
+    }
+
+    async Task RemoveCreature(EncounterItem item)
+    {
+        encounter.Items.Remove(item);
+        await SaveEncounter();
+    }
+
+    async Task AddNewItem()
+    {
+        Creature? creature = await db.GetCreatureByName(creatureSearch);
+        if (creature == null)
+        {
+            creature = new Creature { Name = creatureSearch };
+            await db.AddCreature(creature);
+        }
+        var item = new EncounterItem { EncounterId = encounter.Id, CreatureId = creature.Id, CurrentHP = creature.MaxHP };
+        await db.AddEncounterItem(item);
+        await RefreshEncounter();
+    }
+
+    async Task InitativeToggled()
+    {
+        editInitative = !editInitative;
+        if (!editInitative)
+            await SaveEncounter();
+    }
+
+    async Task<IEnumerable<string>> CreatureSearch(string value, CancellationToken token)
+    {
+        // if text is null or empty, don't return values (drop-down will not open)
+        if (string.IsNullOrEmpty(value))
+            return new string[0];
+
+        List<Creature> creatures = await db.SearchCreature(value);
+        return creatures.Select(c => c.Name);
+
+    }
+
+    async Task ViewPersonClicked(EncounterItem item)
+    {
+        _overlayVisible = true;
+        await RefreshEncounter();
+        editCreature = item.Creature;
+    }
+
+    async Task CardClosed()
+    {
+        if (editCreature != null)
+        {
+            await db.UpdateCreature(editCreature);
+            Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
+        }
+        _overlayVisible = false;
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+    }
+}

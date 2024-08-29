@@ -1,0 +1,102 @@
+﻿@page "/character/create"
+@using System.Reflection;
+
+<PageTitle>Character New</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">@_character.Name</MudText>
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" Color="Color.Primary">
+    <MudTabPanel Text="Basics">
+        <MudText Typo="Typo.h4">Names</MudText>
+        <MudTextField @bind-Value="_character.PlayerName" Label="Player Name" Variant="Variant.Filled" Class="mb-2"></MudTextField>
+        <MudTextField Class="mb-4" @bind-Value="_character.Name" Label="Character Name" Variant="Variant.Filled"></MudTextField>
+        <MudText Typo="Typo.h4">Attributes</MudText>
+        <MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Idenifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-wrap-grow-1"
+                          ApplyDropClassesOnDragStarted="true" CanDropClass="mud-border-success" NoDropClass="mud-border-error">
+            <ChildContent>
+                <AttributeDropZone Identifier="Pool" Items="_items" Character="_character"/>
+                <AttributeDropZone Identifier="Might" Items="_items" Character="_character"/>
+                <AttributeDropZone Identifier="Agility" Items="_items" Character="_character"/>
+                <AttributeDropZone Identifier="Charisma" Items="_items" Character="_character"/>
+                <AttributeDropZone Identifier="Intelligence" Items="_items" Character="_character"/>
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Elevation="25" Class="pa-4 my-4 justify-center mud-theme-primary">
+                    <MudText Align="Align.Center">@context.Name</MudText>
+                </MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
+        <MudText Typo="Typo.h4">Save Masteries</MudText>
+        <MudDropContainer T="DropItem" Items="_saveItems" ItemsSelector="@((item,dropzone) => item.Idenifier == dropzone)" ItemDropped="MasteryUpdated" Class="d-flex flex-wrap flex-wrap-grow-1"
+                          ApplyDropClassesOnDragStarted="true" CanDropClass="mud-border-success" NoDropClass="mud-border-error">
+            <ChildContent>
+                <SaveMasteryDropZone Identifier="Pool" Items="_saveItems" />
+                <SaveMasteryDropZone Identifier="Might" Items="_saveItems" />
+                <SaveMasteryDropZone Identifier="Agility" Items="_saveItems" />
+                <SaveMasteryDropZone Identifier="Charisma" Items="_saveItems" />
+                <SaveMasteryDropZone Identifier="Intelligence" Items="_saveItems" />
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Elevation="25" Class="pa-4 my-4 justify-center mud-theme-primary">
+                    <MudText Align="Align.Center">@context.Name</MudText>
+                </MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
+    </MudTabPanel>
+    <MudTabPanel Text="Skills">
+        <SkillCard Character="_character" Attribute=@nameof(Character.Might)/>
+        <SkillCard Character="_character" Attribute=@nameof(Character.Agility)/>
+        <SkillCard Character="_character" Attribute=@nameof(Character.Charisma)/>
+        <SkillCard Character="_character" Attribute=@nameof(Character.Intelligence)/>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    private Character _character = new();
+
+    public bool Athletics1 = false;
+
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        if (dropItem.Item == null)
+        {
+            return;
+        }
+        dropItem.Item.Idenifier = dropItem.DropzoneIdentifier;
+    }
+
+    private void MasteryUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        ItemUpdated(dropItem);
+        if (dropItem.Item == null)
+        {
+            return;
+        }
+        List<string> attributes = [nameof(Character.Might), nameof(Character.Agility), nameof(Character.Charisma), nameof(Character.Intelligence)];
+        foreach (string att in attributes)
+        {
+            PropertyInfo? prop = _character.GetType().GetProperty(att + "Save");
+            if (prop != null)
+            {
+                DropItem? set = _saveItems.FirstOrDefault(i => i.Idenifier == att);
+                prop.SetValue(_character, set != null);
+            }
+        }
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "3", Idenifier = "Pool" },
+        new DropItem(){ Name = "1", Idenifier = "Pool" },
+        new DropItem(){ Name = "0", Idenifier = "Pool" },
+        new DropItem(){ Name = "-2", Idenifier = "Pool" },
+        new DropItem(){ Name = "+1", Idenifier = "Pool" },
+        new DropItem(){ Name = "+1", Idenifier = "Pool"},
+    };
+
+    private List<DropItem> _saveItems = new()
+    {
+        new DropItem(){ Name = "Save Mastery", Idenifier = "Pool" },
+        new DropItem(){ Name = "Save Mastery", Idenifier = "Pool" },
+    };
+}

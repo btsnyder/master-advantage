@@ -1,0 +1,92 @@
+﻿<MudTd DataLabel="Init">
+    @if (EditInitative)
+    {
+        <MudNumericField Style="font-size: 30px;" Typo="@textSize" @bind-Value="Item.Initiative" Required hidden="@IsHidden()" />
+    }
+    else
+    {
+        <MudText Typo="@textSize" hidden="@IsHidden()">@Item.Initiative</MudText>
+    }
+</MudTd>
+<MudTd>
+    <MudAvatar>
+        <MudImage Src="@("images/" + Item.Creature.ImageSrc)" />
+    </MudAvatar>
+</MudTd>
+<MudTd DataLabel="Name">
+    <MudText Typo="@textSize">@Item.Creature.Name</MudText>
+</MudTd>
+<MudTd DataLabel="Player Name">
+    <MudText Typo="@textSize">@Item.Character?.PlayerName</MudText>
+</MudTd>
+<MudTd DataLabel="PD">
+    <MudText Typo="@textSize" hidden="@IsHidden()">@Item.Creature.PD</MudText>
+</MudTd>
+<MudTd DataLabel="MD">
+    <MudText Typo="@textSize" hidden="@IsHidden()">@Item.Creature.MD</MudText>
+</MudTd>
+<MudTd DataLabel="Conditions">
+    <ConditionsEdit Item="Item" EncounterItemUpdated="EncounterItemUpdated"/>
+</MudTd>
+<MudTd DataLabel="HP">
+    <HealthEdit Item="Item" GMView="GMView" TextSize="textSize" EncounterItemChanged="EncounterItemUpdated"/>
+</MudTd>
+<MudTd DataLabel="Action Points">
+    <div class="d-flex" hidden="@IsHidden()">
+        <MudRating Class="my-auto" SelectedValue="@Item.ActionsUsed" SelectedValueChanged="ActionPointChanged" FullIcon="@Icons.Material.Filled.Square" EmptyIcon="@Icons.Material.Outlined.Square" Size="Size.Large" 
+            MaxValue="@Item.Creature.ActionPoints" Color="Color.Info"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ActionPointReset" />
+    </div>
+</MudTd>
+<MudTd>
+    <MudIconButton Icon="@Icons.Material.Filled.Person" OnClick="@(() => ViewPersonClicked.InvokeAsync(Item))" />
+</MudTd>
+<MudTd>
+    <MudMenu Icon="@Icons.Material.Filled.MoreVert" ActivationEvent="@MouseEvent.LeftClick">
+        <ChildContent>
+            <MudMenuItem OnClick="@(() => CreatureRemoved.InvokeAsync(Item))">
+                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.PersonOff" />
+            </MudMenuItem>
+            <MudMenuItem OnClick="@(() => CreatureCopied.InvokeAsync(Item))">
+                <MudIcon Icon="@Icons.Material.Filled.CopyAll" />
+            </MudMenuItem>
+            <MudMenuItem OnClick="EncounterItemHidden">
+                <MudIcon Icon="@(Item.Hidden ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)" />
+            </MudMenuItem>
+        </ChildContent>
+    </MudMenu>
+</MudTd>
+
+@code {
+    private Typo textSize = Typo.h4;
+    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public bool EditInitative { get; set; }
+    [Parameter] public bool GMView { get; set; }
+    [Parameter] public EventCallback<EncounterItem> CreatureCopied { get; set; }
+    [Parameter] public EventCallback<EncounterItem> CreatureRemoved { get; set; }
+    [Parameter] public EventCallback EncounterItemUpdated { get; set; }
+    [Parameter] public EventCallback<EncounterItem> ViewPersonClicked { get; set;}
+
+    bool IsHidden()
+    {
+        return Item.IsNPC && !GMView;
+    }
+
+    void ActionPointChanged(int value)
+    {
+        Item.ActionsUsed = value;
+        EncounterItemUpdated.InvokeAsync();
+    }
+
+    void ActionPointReset()
+    {
+        Item.ActionsUsed = 0;
+        EncounterItemUpdated.InvokeAsync();
+    }
+
+    void EncounterItemHidden()
+    {
+        Item.Hidden = !Item.Hidden;
+        EncounterItemUpdated.InvokeAsync();
+    }
+}
