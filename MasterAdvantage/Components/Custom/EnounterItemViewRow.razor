@@ -20,10 +20,22 @@
     <MudText Typo="@textSize">@Item.Character?.PlayerName</MudText>
 </MudTd>
 <MudTd DataLabel="PD">
-    <MudText Typo="@textSize" hidden="@IsHidden()">@Item.Creature.PD</MudText>
+    <div class="d-flex" hidden="@IsHidden()">
+        <MudText Typo="@textSize">@Item.Creature.PD</MudText>
+        <div class="ms-2">
+            <MudText Align="Align.Center" Typo="Typo.body2">@(string.Format("({0}/{1})", Item.Creature.PD + 5, Item.Creature.PD + 10))</MudText>
+            <MudText Align="Align.Center" Typo="Typo.body2">PDR: @Item.Creature.PDR</MudText>
+        </div>
+    </div>
 </MudTd>
 <MudTd DataLabel="MD">
-    <MudText Typo="@textSize" hidden="@IsHidden()">@Item.Creature.MD</MudText>
+    <div class="d-flex" hidden="@IsHidden()">
+        <MudText Typo="@textSize">@Item.Creature.MD</MudText>
+        <div class="ms-2">
+            <MudText Align="Align.Center" Typo="Typo.body2">@(string.Format("({0}/{1})", Item.Creature.MD + 5, Item.Creature.MD + 10))</MudText>
+            <MudText Align="Align.Center" Typo="Typo.body2">MDR: @Item.Creature.MDR</MudText>
+        </div>
+    </div>
 </MudTd>
 <MudTd DataLabel="Conditions">
     <ConditionsEdit Item="Item" EncounterItemUpdated="EncounterItemUpdated"/>
