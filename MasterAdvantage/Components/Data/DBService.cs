@@ -169,6 +169,17 @@ namespace MasterAdvantage.Data
                 return await dbContext.Creatures.Where(c => c.Name == name).FirstOrDefaultAsync();
             return character;
         }
+
+
+        public async Task<List<Weapon>> GetWeapons()
+        {
+            return await dbContext.Weapons.ToListAsync();
+        }
+
+        public async Task<List<Weapon>> SearchWeapons(string name)
+        {
+            return await dbContext.Weapons.Where(w => w.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+        }
         #endregion
     }
 }

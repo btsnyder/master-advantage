@@ -4,7 +4,7 @@
     {
         public string? PlayerName { get; set; }
         public int Level { get; set; } = 1;
-        public int CombatMastery => (int)Math.Round((decimal)Level / 2, 0);
+        public int CombatMastery => (int)Math.Round((decimal)Level / 2, 0, MidpointRounding.AwayFromZero);
         public bool MightSave { get; set; }
         public bool AgilitySave { get; set; }
         public bool CharismaSave { get; set; }

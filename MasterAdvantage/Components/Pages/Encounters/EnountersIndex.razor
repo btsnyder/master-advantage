@@ -63,15 +63,19 @@
                      AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Class="my-2 me-6" />
     <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
 </div>
-<MudOverlay @bind-Visible="_overlayVisible" DarkBackground>
-    <CreatureEditCard Creature="editCreature" CardClosed="CardClosed"/>
+<MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
+    <CreatureEditCard Creature="editCreature" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true"/>
+</MudOverlay>
+<MudOverlay @bind-Visible="weaponOverlayVisible" >
+    <WeaponEdit CardClosed="WeaponCardClosed" />
 </MudOverlay>
 
 
 @code {
     private Timer _timer = new Timer(1000);
     private Typo textSize = Typo.h4;
-    private bool _overlayVisible;
+    private bool creatureOverlayVisible;
+    private bool weaponOverlayVisible;
     private bool editInitative;
     private bool gmView;
     private bool autoSave;
@@ -165,7 +169,7 @@
 
     async Task ViewPersonClicked(EncounterItem item)
     {
-        _overlayVisible = true;
+        creatureOverlayVisible = true;
         await RefreshEncounter();
         editCreature = item.Creature;
     }
@@ -177,7 +181,12 @@
             await db.UpdateCreature(editCreature);
             Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
         }
-        _overlayVisible = false;
+        creatureOverlayVisible = false;
+    }
+
+    async Task WeaponCardClosed()
+    {
+        weaponOverlayVisible = false;
     }
 
     public void Dispose()

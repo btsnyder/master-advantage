@@ -20,6 +20,7 @@ namespace MasterAdvantage.Data
         public DbSet<EncounterItem> EncounterItems { get; set; }
         public DbSet<Character> Characters { get; set; }
         public DbSet<Trade> Trades { get; set; }
+        public DbSet<Weapon> Weapons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

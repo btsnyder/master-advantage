@@ -4,7 +4,7 @@ namespace MasterAdvantage.Shared.Components
 {
     public class EncounterItem
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
         public int Initiative { get; set; }
         public Guid? CreatureId { get; set; }
         public Creature Creature { get; set; }

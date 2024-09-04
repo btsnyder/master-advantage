@@ -1,0 +1,49 @@
+﻿@inject DBService db
+
+<MudCard Style="height: 70vh; width: 40vw">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h3">Weapons</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="() => CardClosed.InvokeAsync()" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent Class="overflow-scroll">
+        <MudTabs Rounded="true" ApplyEffectsToContainer="true">
+            <MudTabPanel Text="Weapons">
+                <div class="d-flex mt-2">
+                    @if (selectedWeapon == null)
+                    {
+                        <MudAutocomplete T="Weapon" Label="Weapon" @bind-Value="selectedWeapon" SearchFunc="@WeaponSearch" Clearable="true" />
+                    }
+                    <MudSpacer />
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeapon = new()" Variant="Variant.Filled" Color="Color.Success"/>
+                </div>
+            </MudTabPanel>
+            @if (selectedWeapon != null)
+            {
+                <div class="d-flex">
+                    <MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@("Cappuccino")" />
+                        <MudSelectItem Value="@("Cafe Latte")" />
+                        <MudSelectItem Value="@("Espresso")" />
+                    </MudSelect>
+                    <MudTextField @bind-Value=selectedWeapon.Name Label="Name"/>
+                </div>
+            }
+        </MudTabs>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private Weapon? selectedWeapon { get; set; }
+    [Parameter] public EventCallback CardClosed { get; set; }
+
+    private async Task<IEnumerable<Weapon>> WeaponSearch(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return await db.GetWeapons();
+        return await db.SearchWeapons(value);
+    }
+}

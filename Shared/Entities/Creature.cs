@@ -2,7 +2,7 @@
 {
     public class Creature
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
         public string Name { get; set; } = "";
         public int MaxHP { get; set; }
         public int MaxMana { get; set; }
@@ -19,5 +19,6 @@
         public int Agility { get; set; }
         public int Charisma { get; set; }
         public int Intelligence { get; set; }
+        public List<Weapon> Weapons { get; set; }
     }
 }

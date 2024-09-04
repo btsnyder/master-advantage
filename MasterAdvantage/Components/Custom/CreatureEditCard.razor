@@ -1,72 +1,76 @@
-﻿<MudPaper>
-    <MudCard Style="height: 70vh; width: 40vw">
-        <MudCardHeader>
-            <CardHeaderAvatar>
-                <MudAvatar Color="Color.Secondary" Size="Size.Large">
-                    <MudImage Src="@("images/" + Creature?.ImageSrc)" />
-                </MudAvatar>
-            </CardHeaderAvatar>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h4">@Creature?.Name</MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
-                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="() => CardClosed.InvokeAsync()" />
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent Class="overflow-scroll">
-            <MudTabs Rounded="true" ApplyEffectsToContainer="true">
+﻿<MudCard Style="height: 70vh; width: 40vw">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Color="Color.Secondary" Size="Size.Large">
+                <MudImage Src="@("images/" + Creature?.ImageSrc)" />
+            </MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h4">@Creature?.Name</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="() => CardClosed.InvokeAsync()" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent Class="overflow-scroll">
+        <MudTabs Rounded="true" ApplyEffectsToContainer="true">
+            @if (character != null)
+            {
+                <MudTabPanel Text="Combat">
+                    <MudGrid Class="mt-2">
+                        <MudItem xs="4">
+                            <MudText Align="Align.Center" Typo="Typo.h4">Attack/Spell Check</MudText>
+                            <MudPaper Outlined="true" Class="d-flex ms-2">
+                                <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h4" Class="my-auto mx-auto">@(Creature.Prime + character.CombatMastery)</MudText>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudText Align="Align.Center" Typo="Typo.h4">Save DC</MudText>
+                            <MudPaper Outlined="true" Class="d-flex ms-2">
+                                <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h4" Class="my-auto mx-auto">@(10 + Creature.Prime + character.CombatMastery)</MudText>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudText Align="Align.Center" Typo="Typo.h4">Martial Check</MudText>
+                            <MudPaper Outlined="true" Class="d-flex ms-2">
+                                <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h4" Class="my-auto mx-auto">@(Math.Max(character.Athletics, character.Acrobatics))</MudText>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                    <div class="d-flex">
+                        <MudText Typo="Typo.h4" Class="mt-2">Weapons</MudText>
+                        <MudSpacer />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="@(() => WeaponsOpened.InvokeAsync())" />
+                    </div>
+
+                </MudTabPanel>
+            }
+            <MudTabPanel Text="Skills">
+                <MudText Typo="Typo.h4" Class="mt-2">Skills</MudText>
+                <MudDivider/>
+                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Prime) />
+                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Might) />
+                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Agility) />
+                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Charisma) />
+                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Intelligence) />
                 @if (character != null)
                 {
-                    <MudTabPanel Text="Combat">
-                        <MudGrid Class="mt-2">
-                            <MudItem xs="4">
-                                <MudText Align="Align.Center" Typo="Typo.h6">Attack/Spell Check</MudText>
-                                <MudPaper Outlined="true" Class="d-flex ms-2">
-                                    <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h3" Class="my-auto mx-auto">@(Creature.Prime + character.CombatMastery)</MudText>
-                                </MudPaper>
-                            </MudItem>
-                            <MudItem xs="4">
-                                <MudText Align="Align.Center" Typo="Typo.h6">Save DC</MudText>
-                                <MudPaper Outlined="true" Class="d-flex ms-2">
-                                    <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h3" Class="my-auto mx-auto">@(10 + Creature.Prime + character.CombatMastery)</MudText>
-                                </MudPaper>
-                            </MudItem>
-                            <MudItem xs="4">
-                                <MudText Align="Align.Center" Typo="Typo.h6">Martial Check</MudText>
-                                <MudPaper Outlined="true" Class="d-flex ms-2">
-                                    <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h3" Class="my-auto mx-auto">@(Math.Max(character.Athletics, character.Acrobatics))</MudText>
-                                </MudPaper>
-                            </MudItem>
-                        </MudGrid>
-                    </MudTabPanel>
+                    <MudText Typo="Typo.h4">Trades</MudText>
+                    <MudDivider />
+                    <TradeCard Character="character" />
                 }
-                <MudTabPanel Text="Skills">
-                    <MudText Typo="Typo.h3" Class="mt-2">Skills</MudText>
-                    <MudDivider/>
-                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Prime) />
-                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Might) />
-                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Agility) />
-                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Charisma) />
-                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Intelligence) />
-                    @if (character != null)
-                    {
-                        <MudText Typo="Typo.h3">Trades</MudText>
-                        <MudDivider />
-                        <TradeCard Character="character" />
-                    }
-                </MudTabPanel>
-            </MudTabs>
-        </MudCardContent>
-        <MudCardActions>
-            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
-            <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
-        </MudCardActions>
-    </MudCard>
-</MudPaper>
+            </MudTabPanel>
+        </MudTabs>
+    </MudCardContent>
+    <MudCardActions>
+        <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+    </MudCardActions>
+</MudCard>
 
 @code {
     private Character? character => Creature?.GetType() == typeof(Character) ? (Character)Creature : null;
     [Parameter] public Creature? Creature { get; set; }
     [Parameter] public EventCallback CardClosed { get; set;}
+    [Parameter] public EventCallback WeaponsOpened { get; set; }
 }

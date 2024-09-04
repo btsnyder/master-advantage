@@ -1,0 +1,24 @@
+﻿using Shared.Components;
+
+namespace MasterAdvantage.Shared.Entities
+{
+    public class Weapon
+    {
+        public Guid Id { get; set; }
+        public Guid WeaponStyleId { get; set; }
+        public string Name { get; set; } = "";
+        public int Damage { get; set; }
+        public DamageType DamageType { get; set; }
+        public bool Melee { get; set; }
+        public WeaponType Type { get; set; }
+        public WeaponStyle Style { get; set; }
+        public List<WeaponProperty> WeaponProperties { get; set; }
+
+        public List<Creature> Creatures { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+}

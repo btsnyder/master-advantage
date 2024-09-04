@@ -2,7 +2,7 @@
 {
     public class Trade
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
         public int Mastery { get; set; }
         public string Name { get; set; } = "";
         public string? Attribute { get; set; }
