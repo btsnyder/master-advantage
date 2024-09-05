@@ -1,6 +1,6 @@
 ﻿@inject DBService db
 
-<MudCard Style="height: 70vh; width: 40vw">
+<MudCard Style="height: 70vh; width: 80vw">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Typo="Typo.h3">Weapons</MudText>
@@ -20,30 +20,78 @@
                     <MudSpacer />
                     <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeapon = new()" Variant="Variant.Filled" Color="Color.Success"/>
                 </div>
+                @if (selectedWeapon != null)
+                {
+                    <MudGrid>
+                        <MudItem xs="3">
+                            <div>
+                                <div class="d-flex">
+                                    <MudSelect T="WeaponStyle" Label="Style" AnchorOrigin="Origin.BottomCenter" Class="me-2" @bind-Value=selectedWeapon.Style ToStringFunc="@(s => s?.Name)">
+                                        @foreach (var style in weaponStyles)
+                                        {
+                                            <MudSelectItem Value="style" Disabled="@(style == selectedWeapon.Style)">@style.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    @if (selectedWeapon.Style != null && selectedWeaponStyle == null)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => selectedWeaponStyle = selectedWeapon.Style" Class="my-auto me-2" Variant="Variant.Filled" Color="Color.Default" />
+                                    }
+                                    @if (selectedWeaponStyle != null)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => selectedWeaponStyle = null" Class="my-auto me-2" Variant="Variant.Filled" Color="Color.Error" />
+                                    }
+                                    else
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeaponStyle = new()" Class="my-auto me-2" Variant="Variant.Filled" Color="Color.Success" />
+
+                                    }
+                                </div>
+                                @if (selectedWeaponStyle != null)
+                                {
+                                    <MudTextField @bind-Value=selectedWeaponStyle.Name Variant="Variant.Outlined" Label="Name" Placeholder="New Weapon Style"  />
+                                    <MudTextField @bind-Value=selectedWeaponStyle.Description Variant="Variant.Outlined" Label="Description" Lines="4" />
+                                    <MudButton OnClick="AddWeaponStyle" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+                                }
+                            </div>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField @bind-Value=selectedWeapon.Name Label="Name" />
+                        </MudItem>
+                    </MudGrid>
+                }
             </MudTabPanel>
-            @if (selectedWeapon != null)
-            {
-                <div class="d-flex">
-                    <MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
-                        <MudSelectItem Value="@("Cappuccino")" />
-                        <MudSelectItem Value="@("Cafe Latte")" />
-                        <MudSelectItem Value="@("Espresso")" />
-                    </MudSelect>
-                    <MudTextField @bind-Value=selectedWeapon.Name Label="Name"/>
-                </div>
-            }
+           
         </MudTabs>
     </MudCardContent>
 </MudCard>
 
 @code {
     private Weapon? selectedWeapon { get; set; }
+    private WeaponStyle? selectedWeaponStyle { get; set; }
+    private List<WeaponStyle> weaponStyles { get; set; }
     [Parameter] public EventCallback CardClosed { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            weaponStyles = await db.GetWeaponStylesAsync();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     private async Task<IEnumerable<Weapon>> WeaponSearch(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value))
-            return await db.GetWeapons();
-        return await db.SearchWeapons(value);
+            return await db.GetWeaponsAsync();
+        return await db.SearchWeaponsAsync(value);
+    }
+
+    private async Task AddWeaponStyle()
+    {
+        selectedWeapon!.Style = selectedWeaponStyle!;
+        await db.UpdateWeaponStyleAsync(selectedWeaponStyle!);
+        weaponStyles = await db.GetWeaponStylesAsync();
+        selectedWeaponStyle = null;
     }
 }

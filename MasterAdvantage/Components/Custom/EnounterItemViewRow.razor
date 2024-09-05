@@ -16,58 +16,62 @@
 <MudTd DataLabel="Name">
     <MudText Typo="@textSize">@Item.Creature.Name</MudText>
 </MudTd>
-<MudTd DataLabel="Player Name">
-    <MudText Typo="@textSize">@Item.Character?.PlayerName</MudText>
-</MudTd>
-<MudTd DataLabel="PD">
-    <div class="d-flex" hidden="@IsHidden()">
-        <MudText Typo="@textSize">@Item.Creature.PD</MudText>
-        <div class="ms-2">
-            <MudText Align="Align.Center" Typo="Typo.body2">@(string.Format("({0}/{1})", Item.Creature.PD + 5, Item.Creature.PD + 10))</MudText>
-            <MudText Align="Align.Center" Typo="Typo.body2">PDR: @Item.Creature.PDR</MudText>
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudTd DataLabel="Player Name">
+        <MudText Typo="@textSize">@Item.Character?.PlayerName</MudText>
+    </MudTd>
+    <MudTd DataLabel="PD">
+        <div class="d-flex" hidden="@IsHidden()">
+            <MudText Typo="@textSize">@Item.Creature.PD</MudText>
+            <div class="ms-2">
+                <MudText Align="Align.Center" Typo="Typo.body2">@(string.Format("({0}/{1})", Item.Creature.PD + 5, Item.Creature.PD + 10))</MudText>
+                <MudText Align="Align.Center" Typo="Typo.body2">PDR: @Item.Creature.PDR</MudText>
+            </div>
         </div>
-    </div>
-</MudTd>
-<MudTd DataLabel="MD">
-    <div class="d-flex" hidden="@IsHidden()">
-        <MudText Typo="@textSize">@Item.Creature.MD</MudText>
-        <div class="ms-2">
-            <MudText Align="Align.Center" Typo="Typo.body2">@(string.Format("({0}/{1})", Item.Creature.MD + 5, Item.Creature.MD + 10))</MudText>
-            <MudText Align="Align.Center" Typo="Typo.body2">MDR: @Item.Creature.MDR</MudText>
+    </MudTd>
+    <MudTd DataLabel="MD">
+        <div class="d-flex" hidden="@IsHidden()">
+            <MudText Typo="@textSize">@Item.Creature.MD</MudText>
+            <div class="ms-2">
+                <MudText Align="Align.Center" Typo="Typo.body2">@(string.Format("({0}/{1})", Item.Creature.MD + 5, Item.Creature.MD + 10))</MudText>
+                <MudText Align="Align.Center" Typo="Typo.body2">MDR: @Item.Creature.MDR</MudText>
+            </div>
         </div>
-    </div>
-</MudTd>
-<MudTd DataLabel="Conditions">
-    <ConditionsEdit Item="Item" EncounterItemUpdated="EncounterItemUpdated"/>
-</MudTd>
+    </MudTd>
+    <MudTd DataLabel="Conditions">
+        <ConditionsEdit Item="Item" EncounterItemUpdated="EncounterItemUpdated"/>
+    </MudTd>
+</MudHidden>
 <MudTd DataLabel="HP">
     <HealthEdit Item="Item" GMView="GMView" TextSize="textSize" EncounterItemChanged="EncounterItemUpdated"/>
 </MudTd>
-<MudTd DataLabel="Action Points">
-    <div class="d-flex" hidden="@IsHidden()">
-        <MudRating Class="my-auto" SelectedValue="@Item.ActionsUsed" SelectedValueChanged="ActionPointChanged" FullIcon="@Icons.Material.Filled.Square" EmptyIcon="@Icons.Material.Outlined.Square" Size="Size.Large" 
-            MaxValue="@Item.Creature.ActionPoints" Color="Color.Info"/>
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ActionPointReset" />
-    </div>
-</MudTd>
-<MudTd>
-    <MudIconButton Icon="@Icons.Material.Filled.Person" OnClick="@(() => ViewPersonClicked.InvokeAsync(Item))" />
-</MudTd>
-<MudTd>
-    <MudMenu Icon="@Icons.Material.Filled.MoreVert" ActivationEvent="@MouseEvent.LeftClick">
-        <ChildContent>
-            <MudMenuItem OnClick="@(() => CreatureRemoved.InvokeAsync(Item))">
-                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.PersonOff" />
-            </MudMenuItem>
-            <MudMenuItem OnClick="@(() => CreatureCopied.InvokeAsync(Item))">
-                <MudIcon Icon="@Icons.Material.Filled.CopyAll" />
-            </MudMenuItem>
-            <MudMenuItem OnClick="EncounterItemHidden">
-                <MudIcon Icon="@(Item.Hidden ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)" />
-            </MudMenuItem>
-        </ChildContent>
-    </MudMenu>
-</MudTd>
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudTd DataLabel="Action Points">
+        <div class="d-flex" hidden="@IsHidden()">
+            <MudRating Class="my-auto" SelectedValue="@Item.ActionsUsed" SelectedValueChanged="ActionPointChanged" FullIcon="@Icons.Material.Filled.Square" EmptyIcon="@Icons.Material.Outlined.Square" Size="Size.Large" 
+                MaxValue="@Item.Creature.ActionPoints" Color="Color.Info"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ActionPointReset" />
+        </div>
+    </MudTd>
+    <MudTd>
+        <MudIconButton Icon="@Icons.Material.Filled.Person" OnClick="@(() => ViewPersonClicked.InvokeAsync(Item))" />
+    </MudTd>
+    <MudTd>
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" ActivationEvent="@MouseEvent.LeftClick">
+            <ChildContent>
+                <MudMenuItem OnClick="@(() => CreatureRemoved.InvokeAsync(Item))">
+                    <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.PersonOff" />
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => CreatureCopied.InvokeAsync(Item))">
+                    <MudIcon Icon="@Icons.Material.Filled.CopyAll" />
+                </MudMenuItem>
+                <MudMenuItem OnClick="EncounterItemHidden">
+                    <MudIcon Icon="@(Item.Hidden ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)" />
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </MudTd>
+</MudHidden>
 
 @code {
     private Typo textSize = Typo.h4;

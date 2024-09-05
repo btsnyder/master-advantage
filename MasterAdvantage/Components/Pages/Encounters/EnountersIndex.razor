@@ -10,15 +10,19 @@
         <col style="width:5%" />
         <col style="width:50px;" />
         <col />
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <col />
+            <col style="width:5%" />
+            <col style="width:5%" />
+            <col style="width:5%" />
+        </MudHidden>
         <col />
-        <col style="width:5%" />
-        <col style="width:5%" />
-        <col style="width:5%" />
-        <col style="width:10%" />
-        <col style="width:150px;" />
-        <col style="width:50px;" />
-        <col style="width:50px;" />
-        <col style="width:50px;" />
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <col style="width:150px;" />
+            <col style="width:50px;" />
+            <col style="width:50px;" />
+            <col style="width:50px;" />
+        </MudHidden>
     </ColGroup>
     <HeaderContent>
         <MudTh>
@@ -29,14 +33,18 @@
         </MudTh>
         <MudTh />
         <MudTh>Name</MudTh>
-        <MudTh>Player Name</MudTh>
-        <MudTh>PD</MudTh>
-        <MudTh>MD</MudTh>
-        <MudTh>Conditions</MudTh>
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <MudTh>Player Name</MudTh>
+            <MudTh>PD</MudTh>
+            <MudTh>MD</MudTh>
+            <MudTh>Conditions</MudTh>
+        </MudHidden>
         <MudTh>HP</MudTh>
-        <MudTh>Action Points</MudTh>
-        <MudTh />
-        <MudTh />
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <MudTh>Action Points</MudTh>
+            <MudTh />
+            <MudTh />
+        </MudHidden>
     </HeaderContent>
     <RowTemplate>
         <EnounterItemViewRow Item="context" EditInitative="editInitative" GMView="gmView" CreatureCopied="CopyCreature" CreatureRemoved="@((item) => RemoveCreature(item))"
@@ -64,7 +72,7 @@
     <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
 </div>
 <MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
-    <CreatureEditCard Creature="editCreature" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true"/>
+    <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" />
 </MudOverlay>
 <MudOverlay @bind-Visible="weaponOverlayVisible" >
     <WeaponEdit CardClosed="WeaponCardClosed" />
@@ -81,7 +89,7 @@
     private bool autoSave;
     private bool autoLoad;
     private string creatureSearch = "";
-    private Creature? editCreature;
+    private EncounterItem? editItem;
     private Encounter encounter = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -171,14 +179,14 @@
     {
         creatureOverlayVisible = true;
         await RefreshEncounter();
-        editCreature = item.Creature;
+        editItem = item;
     }
 
     async Task CardClosed()
     {
-        if (editCreature != null)
+        if (editItem != null)
         {
-            await db.UpdateCreature(editCreature);
+            await db.UpdateEncounterItem(editItem);
             Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
         }
         creatureOverlayVisible = false;

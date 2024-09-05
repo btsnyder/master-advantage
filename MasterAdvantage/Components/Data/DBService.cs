@@ -1,6 +1,8 @@
 ﻿using MasterAdvantage.Shared.Components;
 using MasterAdvantage.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
+using Shared.Entities;
+using System.Diagnostics.Metrics;
 using static MudBlazor.CategoryTypes;
 using static MudBlazor.Colors;
 
@@ -144,6 +146,20 @@ namespace MasterAdvantage.Data
             return creature;
         }
 
+        public async Task<EncounterItem> UpdateEncounterItem(EncounterItem item)
+        {
+            try
+            {
+                dbContext.Update(item);
+                await UpdateCreature(item.Creature);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return item;
+        }
+
         public async Task DeleteEncounterAsync(Encounter encounter)
         {
             try
@@ -171,14 +187,33 @@ namespace MasterAdvantage.Data
         }
 
 
-        public async Task<List<Weapon>> GetWeapons()
+        public async Task<List<Weapon>> GetWeaponsAsync()
         {
             return await dbContext.Weapons.ToListAsync();
         }
 
-        public async Task<List<Weapon>> SearchWeapons(string name)
+        public async Task<List<Weapon>> SearchWeaponsAsync(string name)
         {
             return await dbContext.Weapons.Where(w => w.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+        }
+
+        public async Task<WeaponStyle> UpdateWeaponStyleAsync(WeaponStyle style)
+        {
+            try
+            {
+                dbContext.WeaponStyles.Update(style);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return style;
+        }
+
+        public async Task<List<WeaponStyle>> GetWeaponStylesAsync()
+        {
+            return await dbContext.WeaponStyles.ToListAsync();
         }
         #endregion
     }

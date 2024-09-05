@@ -21,6 +21,7 @@ namespace MasterAdvantage.Data
         public DbSet<Character> Characters { get; set; }
         public DbSet<Trade> Trades { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
+        public DbSet<WeaponStyle> WeaponStyles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
