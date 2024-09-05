@@ -1,4 +1,4 @@
-﻿<MudCard Style="height: 70vh; width: 40vw">
+﻿<MudCard Style="height: 70vh; width: 80vw">
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar Color="Color.Secondary" Size="Size.Large">
@@ -17,26 +17,13 @@
             @if (character != null)
             {
                 <MudTabPanel Text="Combat">
-                    <MudGrid Class="mt-2">
-                        <MudItem xs="4">
-                            <MudText Align="Align.Center" Typo="Typo.h4">Attack/Spell Check</MudText>
-                            <MudPaper Outlined="true" Class="d-flex ms-2">
-                                <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h4" Class="my-auto mx-auto">@(Creature.Prime + character.CombatMastery)</MudText>
-                            </MudPaper>
-                        </MudItem>
-                        <MudItem xs="4">
-                            <MudText Align="Align.Center" Typo="Typo.h4">Save DC</MudText>
-                            <MudPaper Outlined="true" Class="d-flex ms-2">
-                                <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h4" Class="my-auto mx-auto">@(10 + Creature.Prime + character.CombatMastery)</MudText>
-                            </MudPaper>
-                        </MudItem>
-                        <MudItem xs="4">
-                            <MudText Align="Align.Center" Typo="Typo.h4">Martial Check</MudText>
-                            <MudPaper Outlined="true" Class="d-flex ms-2">
-                                <MudText Style="width: 3vw;" Align="Align.Center" Typo="Typo.h4" Class="my-auto mx-auto">@(Math.Max(character.Athletics, character.Acrobatics))</MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+                    <div class="d-flex flex-grow-1">
+                        <PropertyDisplay Title="Attack/Spell" Value="@(Creature.Prime + character.CombatMastery)" />
+                        <PropertyDisplay Title="Save DC" Value="@(10 + Creature.Prime + character.CombatMastery)" />
+                        <PropertyDisplay Title="Martial Check" Value="@(Math.Max(character.Athletics, character.Acrobatics))" />
+                        <PropertyDisplay Title="Stamina" @bind-Value="@character.MaxStamina" CanEdit="true"/>
+                        <PropertyDisplay Title="Mana" @bind-Value="@character.MaxMana" CanEdit="true"/>
+                    </div>
                     <div class="d-flex">
                         <MudText Typo="Typo.h4" Class="mt-2">Weapons</MudText>
                         <MudSpacer />
@@ -48,11 +35,19 @@
             <MudTabPanel Text="Skills">
                 <MudText Typo="Typo.h4" Class="mt-2">Skills</MudText>
                 <MudDivider/>
-                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Prime) />
-                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Might) />
-                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Agility) />
-                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Charisma) />
-                <SkillCard Creature="Creature" Attribute=@nameof(Creature.Intelligence) />
+                <div class="d-flex flex-grow-1">
+                    <div style="width: 25%"/>
+                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Prime) />
+                    <div style="width: 25%" />
+                </div>
+                <div class="d-flex flex-grow-1">
+                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Might) Class="me-2"/>
+                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Agility) />
+                </div>
+                <div class="d-flex flex-grow-1">
+                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Charisma) Class="me-2" />
+                    <SkillCard Creature="Creature" Attribute=@nameof(Creature.Intelligence) />
+                </div>
                 @if (character != null)
                 {
                     <MudText Typo="Typo.h4">Trades</MudText>

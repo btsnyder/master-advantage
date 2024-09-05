@@ -19,6 +19,8 @@
         public int Agility { get; set; }
         public int Charisma { get; set; }
         public int Intelligence { get; set; }
+        public int Speed { get; set; }
+        public int Jump { get; set; }
         public List<Weapon> Weapons { get; set; }
     }
 }

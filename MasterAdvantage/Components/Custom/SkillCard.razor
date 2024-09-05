@@ -1,13 +1,13 @@
-﻿<MudPaper Class="pa-4 my-4 mud-background-gray">
+﻿<MudPaper Class="@("pa-4 my-4 mud-background-gray flex-1 " + Class)">
     <MudCardContent>
         <MudGrid>
-            <MudItem xs="4">
+            <MudItem xs="5">
                 <div class="d-flex">
-                    <MudText Align="Align.Left" Typo="Typo.h5" Class="flex-1 my-auto">@Attribute</MudText>
+                    <MudText Align="Align.Left" Typo="Typo.h6" Class="flex-1 my-auto">@Attribute</MudText>
                     @if (Attribute != nameof(Character.Prime) && character != null)
                     {
                         <MudButton Variant="Variant.Filled" Color="@(Helpers.GetPropertyByName<bool>(character, Attribute + "Save") ? Color.Tertiary : Color.Default)" OnClick="SaveClicked">
-                            <MudText Typo="Typo.h6">Save: @GetSave()</MudText>
+                            <MudText Typo="Typo.body1">Save: @GetSave()</MudText>
                         </MudButton>
                     }
                 </div>
@@ -22,7 +22,7 @@
                     </MudCardContent>
                 </MudCard>
             </MudItem>
-            <MudItem xs="8">
+            <MudItem xs="7">
                 @if (character != null)
                 {
                     @foreach (var skill in character.AttributeSkills[Attribute])
@@ -40,6 +40,7 @@
     private Character? character => Creature?.GetType() == typeof(Character) ? (Character)Creature : null;
     [Parameter] public Creature Creature { get; set; }
     [Parameter] public string Attribute { get; set; }
+    [Parameter] public string Class { get; set; }
 
     int GetSave()
     {

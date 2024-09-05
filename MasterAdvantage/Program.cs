@@ -31,7 +31,7 @@ builder.Services.AddScoped<DBService>();
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(5001); // Use the desired port
+    serverOptions.ListenAnyIP(5000); // Use the desired port
 });
 
 var app = builder.Build();

@@ -1,0 +1,38 @@
+﻿<div class="flex-1">
+    <MudText Align="Align.Center" Typo="Typo.h4">@Title</MudText>
+    <MudPaper Outlined="true" Class="d-flex ms-2">
+        @if (CanEdit)
+        {
+            <div class="d-flex flex-grow-1">
+                <div style="width: 40%"/>
+                <MudText Align="Align.Center" Typo="Typo.h4" Class="my-2 mx-auto">@Value</MudText>
+
+                <MudNumericField @bind-Value=Value Style="width: 50px; font-size: 30px;" Class="my-1" />
+                <div style="width: 40%" />
+            </div>
+        }
+        else
+        {
+            <MudText Align="Align.Center" Typo="Typo.h4" Class="my-2 mx-auto">@Value</MudText>
+        }
+    </MudPaper>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    private int _value;
+    [Parameter]
+    public int Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+    [Parameter] public bool CanEdit { get; set; }
+}
