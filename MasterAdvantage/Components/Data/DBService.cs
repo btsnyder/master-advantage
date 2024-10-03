@@ -211,9 +211,42 @@ namespace MasterAdvantage.Data
             return style;
         }
 
+        public async Task<WeaponProperty> UpdateWeaponPropertyAsync(WeaponProperty prop)
+        {
+            try
+            {
+                dbContext.WeaponProperties.Update(prop);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return prop;
+        }
+
         public async Task<List<WeaponStyle>> GetWeaponStylesAsync()
         {
             return await dbContext.WeaponStyles.ToListAsync();
+        }
+
+        public async Task<List<WeaponProperty>> GetWeaponPropertiesAsync()
+        {
+            return await dbContext.WeaponProperties.ToListAsync();
+        }
+
+        public async Task<Weapon> UpdateWeapon(Weapon weapon)
+        {
+            try
+            {
+                dbContext.Weapons.Update(weapon);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return weapon;
         }
         #endregion
     }

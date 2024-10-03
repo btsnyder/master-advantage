@@ -1,4 +1,4 @@
-﻿using Shared.Components;
+﻿using MasterAdvantage.Shared.Components;
 
 namespace MasterAdvantage.Shared.Entities
 {
@@ -11,8 +11,9 @@ namespace MasterAdvantage.Shared.Entities
         public DamageType DamageType { get; set; }
         public bool Melee { get; set; }
         public WeaponType Type { get; set; }
+        public string Range { get; set; } = "";
         public WeaponStyle Style { get; set; }
-        public List<WeaponProperty> WeaponProperties { get; set; }
+        public List<WeaponProperty> WeaponProperties { get; set; } = new();
 
         public List<Creature> Creatures { get; set; }
 

@@ -3,6 +3,7 @@ using System;
 using MasterAdvantage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterAdvantage.Migrations
 {
     [DbContext(typeof(MasterAdvantageContext))]
-    partial class MasterAdvantageContextModelSnapshot : ModelSnapshot
+    [Migration("20241002203634_AddWeaponProps")]
+    partial class AddWeaponProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -205,10 +208,6 @@ namespace MasterAdvantage.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Range")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

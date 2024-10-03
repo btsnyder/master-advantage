@@ -1,4 +1,4 @@
-﻿namespace Shared.Components
+﻿namespace MasterAdvantage.Shared.Components
 {
     public enum WeaponType
     {

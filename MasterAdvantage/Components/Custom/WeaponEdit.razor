@@ -1,6 +1,6 @@
 ﻿@inject DBService db
 
-<MudCard Style="height: 70vh; width: 80vw">
+<MudCard Style="height: 100%">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Typo="Typo.h3">Weapons</MudText>
@@ -9,66 +9,119 @@
             <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="() => CardClosed.InvokeAsync()" />
         </CardHeaderActions>
     </MudCardHeader>
-    <MudCardContent Class="overflow-scroll">
-        <MudTabs Rounded="true" ApplyEffectsToContainer="true">
-            <MudTabPanel Text="Weapons">
-                <div class="d-flex mt-2">
-                    @if (selectedWeapon == null)
+    <MudCardContent>
+        <div class="d-flex my-2">
+            @if (selectedWeapon == null)
+            {
+                <MudAutocomplete T="Weapon" Label="Weapon" @bind-Value="selectedWeapon" SearchFunc="@WeaponSearch" Clearable="true" />
+            }
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeapon = new()" Variant="Variant.Filled" Color="Color.Success"/>
+        </div>
+        @if (selectedWeapon != null)
+        {
+            <div class="d-flex mb-2">
+                <MudSelect T="WeaponStyle" Label="Style" AnchorOrigin="Origin.BottomCenter" Class="me-2" @bind-Value=selectedWeapon.Style ToStringFunc="@(s => s?.Name)">
+                    @foreach (var style in weaponStyles)
                     {
-                        <MudAutocomplete T="Weapon" Label="Weapon" @bind-Value="selectedWeapon" SearchFunc="@WeaponSearch" Clearable="true" />
+                        <MudSelectItem Value="style" Disabled="@(style == selectedWeapon.Style)">@style.Name</MudSelectItem>
                     }
-                    <MudSpacer />
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeapon = new()" Variant="Variant.Filled" Color="Color.Success"/>
-                </div>
-                @if (selectedWeapon != null)
+                </MudSelect>
+                @if (selectedWeapon.Style != null && selectedWeaponStyle == null)
                 {
-                    <MudGrid>
-                        <MudItem xs="3">
-                            <div>
-                                <div class="d-flex">
-                                    <MudSelect T="WeaponStyle" Label="Style" AnchorOrigin="Origin.BottomCenter" Class="me-2" @bind-Value=selectedWeapon.Style ToStringFunc="@(s => s?.Name)">
-                                        @foreach (var style in weaponStyles)
-                                        {
-                                            <MudSelectItem Value="style" Disabled="@(style == selectedWeapon.Style)">@style.Name</MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                    @if (selectedWeapon.Style != null && selectedWeaponStyle == null)
-                                    {
-                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => selectedWeaponStyle = selectedWeapon.Style" Class="my-auto me-2" Variant="Variant.Filled" Color="Color.Default" />
-                                    }
-                                    @if (selectedWeaponStyle != null)
-                                    {
-                                        <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => selectedWeaponStyle = null" Class="my-auto me-2" Variant="Variant.Filled" Color="Color.Error" />
-                                    }
-                                    else
-                                    {
-                                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeaponStyle = new()" Class="my-auto me-2" Variant="Variant.Filled" Color="Color.Success" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => selectedWeaponStyle = selectedWeapon.Style" Class="my-auto" Variant="Variant.Filled" Color="Color.Default" />
+                }
+                @if (selectedWeaponStyle != null)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => selectedWeaponStyle = null" Class="my-auto" Variant="Variant.Filled" Color="Color.Error" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedWeaponStyle = new()" Class="my-auto" Variant="Variant.Filled" Color="Color.Success" />
 
-                                    }
-                                </div>
-                                @if (selectedWeaponStyle != null)
+                }
+            </div>
+            @if (selectedWeaponStyle != null)
+            {
+                <MudTextField @bind-Value=selectedWeaponStyle.Name Variant="Variant.Outlined" Label="Name" Placeholder="New Weapon Style"  />
+                <MudTextField @bind-Value=selectedWeaponStyle.Description Variant="Variant.Outlined" Label="Description" Lines="4" />
+                <MudButton OnClick="AddWeaponStyle" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+            }
+            <MudTextField @bind-Value=selectedWeapon.Name Label="Name" Class="mb-2" />
+            <div class="d-flex mb-2 gap-2">
+                <MudNumericField Label="Damage" @bind-Value=selectedWeapon.Damage Variant="Variant.Outlined" Style="width: 75px"/>
+                <MudSelect Label="Damage Type" AnchorOrigin="Origin.BottomCenter" Class="flex-grow-1 my-auto" Style="width: 200px" @bind-Value=selectedWeapon.DamageType>
+                    @foreach (var damage in (DamageType[])Enum.GetValues(typeof(DamageType)))
+                    {
+                        <MudSelectItem Value="damage" Disabled="@(damage == selectedWeapon.DamageType)">@damage</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+            <MudTextField @bind-Value=selectedWeapon.Range Label="Range" Class="mb-2" />
+            <div class="d-flex">
+                <MudText Class="my-auto">Weapon Properties</MudText>
+                <MudSpacer />
+                <MudButton OnClick="() => editWeaponProperty = new()" Class="my-auto" Variant="Variant.Filled" Color="Color.Info">New</MudButton>
+            </div>
+            @if (selectedWeapon.WeaponProperties != null)
+            {
+                <div class="d-flex flex-wrap mb-2">
+                    @foreach (var property in selectedWeapon.WeaponProperties)
+                    {
+                        <MudChip T="string" Color="Color.Primary" OnClose="() => selectedWeapon.WeaponProperties.Remove(property)">@property.Name</MudChip>
+                    }
+                </div>
+            }
+            <div class="d-flex mb-2 gap-2">
+                <MudSelect T="WeaponProperty" Label="Property" AnchorOrigin="Origin.BottomCenter" Class="me-2" @bind-Value=selectedWeaponProperty ToStringFunc="@(s => s?.Name)">
+                    @foreach (var prop in weaponProperties)
+                    {
+                        <MudSelectItem Value="prop">
+                            <div class="d-flex">
+                                <MudText>@prop.Name</MudText>
+                                @if (selectedWeapon.WeaponProperties.Contains(prop))
                                 {
-                                    <MudTextField @bind-Value=selectedWeaponStyle.Name Variant="Variant.Outlined" Label="Name" Placeholder="New Weapon Style"  />
-                                    <MudTextField @bind-Value=selectedWeaponStyle.Description Variant="Variant.Outlined" Label="Description" Lines="4" />
-                                    <MudButton OnClick="AddWeaponStyle" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+                                    <MudSpacer />
+                                    <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" />
                                 }
                             </div>
-                        </MudItem>
-                        <MudItem xs="4">
-                            <MudTextField @bind-Value=selectedWeapon.Name Label="Name" />
-                        </MudItem>
-                    </MudGrid>
+                        </MudSelectItem>
+                    }
+                </MudSelect>
+                @if (editWeaponProperty == null)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => editWeaponProperty = selectedWeaponProperty" Class="my-auto" Variant="Variant.Filled" Color="Color.Default" />
                 }
-            </MudTabPanel>
-           
-        </MudTabs>
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => editWeaponProperty = null" Class="my-auto" Variant="Variant.Filled" Color="Color.Error" />
+                }
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Disabled="@selectedWeapon.WeaponProperties.Contains(selectedWeaponProperty)" OnClick="() => selectedWeapon.WeaponProperties.Add(selectedWeaponProperty)" Class="my-auto" Variant="Variant.Filled" Color="Color.Success" />
+            </div>
+            @if (editWeaponProperty != null)
+            {
+                <MudTextField @bind-Value=editWeaponProperty.Name Variant="Variant.Outlined" Label="Name" Placeholder="New Weapon Property" />
+                <MudTextField @bind-Value=editWeaponProperty.Description Variant="Variant.Outlined" Label="Description" Lines="4" />
+                <MudTextField @bind-Value=editWeaponProperty.Effects Variant="Variant.Outlined" Label="Effect" Lines="3" />
+                <MudButton OnClick="AddWeaponProperty" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+            }
+        }
     </MudCardContent>
+    <MudCardActions>
+        @if (selectedWeapon != null)
+        {
+            <MudButton OnClick="SaveWeapon" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+        }
+    </MudCardActions>
 </MudCard>
 
 @code {
     private Weapon? selectedWeapon { get; set; }
     private WeaponStyle? selectedWeaponStyle { get; set; }
+    private WeaponProperty? selectedWeaponProperty { get; set; }
+    private WeaponProperty? editWeaponProperty { get; set; }
     private List<WeaponStyle> weaponStyles { get; set; }
+    private List<WeaponProperty> weaponProperties { get; set; }
     [Parameter] public EventCallback CardClosed { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -76,6 +129,7 @@
         if (firstRender)
         {
             weaponStyles = await db.GetWeaponStylesAsync();
+            weaponProperties = await db.GetWeaponPropertiesAsync();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -93,5 +147,20 @@
         await db.UpdateWeaponStyleAsync(selectedWeaponStyle!);
         weaponStyles = await db.GetWeaponStylesAsync();
         selectedWeaponStyle = null;
+    }
+
+    private async Task AddWeaponProperty()
+    {
+        selectedWeapon!.WeaponProperties.Add(editWeaponProperty!);
+        await db.UpdateWeaponPropertyAsync(editWeaponProperty!);
+        weaponProperties = await db.GetWeaponPropertiesAsync();
+        selectedWeaponProperty = null;
+        editWeaponProperty = null;
+    }
+
+    private async Task SaveWeapon()
+    {
+        await db.UpdateWeapon(selectedWeapon);
+        selectedWeapon = null;
     }
 }

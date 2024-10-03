@@ -1,8 +1,18 @@
-﻿namespace Shared.Components
+﻿namespace MasterAdvantage.Shared.Components
 {
     public enum DamageType
     {
+        Bludgeoning,
+        Cold,
+        Corrosion,
+        Fire,
+        Lightning,
+        Piercing,
+        Poison,
         Slashing,
-        Damage
+        Psychic,
+        Radiant,
+        Sonic,
+        Umbral,
     }
 }

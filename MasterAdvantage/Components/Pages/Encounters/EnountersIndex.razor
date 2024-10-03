@@ -72,10 +72,12 @@
     <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
 </div>
 <MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
-    <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" />
-</MudOverlay>
-<MudOverlay @bind-Visible="weaponOverlayVisible" >
-    <WeaponEdit CardClosed="WeaponCardClosed" />
+    <MudPaper>
+        <MudDrawer @bind-Open="weaponOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+            <WeaponEdit CardClosed="WeaponCardClosed" />
+        </MudDrawer>
+        <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" />
+    </MudPaper>
 </MudOverlay>
 
 
@@ -83,7 +85,7 @@
     private Timer _timer = new Timer(1000);
     private Typo textSize = Typo.h4;
     private bool creatureOverlayVisible;
-    private bool weaponOverlayVisible;
+    private bool weaponOverlayVisible = false;
     private bool editInitative;
     private bool gmView;
     private bool autoSave;
