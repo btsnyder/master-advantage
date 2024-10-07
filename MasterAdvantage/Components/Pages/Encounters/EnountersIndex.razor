@@ -74,9 +74,12 @@
 <MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
     <MudPaper>
         <MudDrawer @bind-Open="weaponOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
-            <WeaponEdit CardClosed="WeaponCardClosed" />
+            <WeaponEdit CardClosed="() => weaponOverlayVisible = false" />
         </MudDrawer>
-        <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" />
+        <MudDrawer @bind-Open="spellOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+            <SpellEdit CardClosed="() => spellOverlayVisible = false" />
+        </MudDrawer>
+        <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" SpellsOpened="() => spellOverlayVisible = true"/>
     </MudPaper>
 </MudOverlay>
 
@@ -86,6 +89,7 @@
     private Typo textSize = Typo.h4;
     private bool creatureOverlayVisible;
     private bool weaponOverlayVisible = false;
+    private bool spellOverlayVisible = false;
     private bool editInitative;
     private bool gmView;
     private bool autoSave;
@@ -192,11 +196,6 @@
             Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
         }
         creatureOverlayVisible = false;
-    }
-
-    async Task WeaponCardClosed()
-    {
-        weaponOverlayVisible = false;
     }
 
     public void Dispose()

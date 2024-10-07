@@ -3,6 +3,7 @@ using System;
 using MasterAdvantage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterAdvantage.Migrations
 {
     [DbContext(typeof(MasterAdvantageContext))]
-    partial class MasterAdvantageContextModelSnapshot : ModelSnapshot
+    [Migration("20241003162543_AddWeaponStyleEffect")]
+    partial class AddWeaponStyleEffect
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -161,77 +164,6 @@ namespace MasterAdvantage.Migrations
                     b.HasDiscriminator().HasValue("Creature");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Concentration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("CreatureId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Duration")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Range")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatureId");
-
-                    b.ToTable("Spells");
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.SpellEnhancement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("SpellId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SpellId");
-
-                    b.ToTable("SpellEnhancements");
                 });
 
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Trade", b =>
@@ -479,24 +411,6 @@ namespace MasterAdvantage.Migrations
                     b.Navigation("Encounter");
                 });
 
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
-                {
-                    b.HasOne("MasterAdvantage.Shared.Entities.Creature", null)
-                        .WithMany("Spells")
-                        .HasForeignKey("CreatureId");
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.SpellEnhancement", b =>
-                {
-                    b.HasOne("MasterAdvantage.Shared.Entities.Spell", "Spell")
-                        .WithMany("Enhancements")
-                        .HasForeignKey("SpellId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Spell");
-                });
-
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Trade", b =>
                 {
                     b.HasOne("MasterAdvantage.Shared.Entities.Character", "Character")
@@ -537,16 +451,6 @@ namespace MasterAdvantage.Migrations
             modelBuilder.Entity("MasterAdvantage.Shared.Components.Encounter", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Creature", b =>
-                {
-                    b.Navigation("Spells");
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
-                {
-                    b.Navigation("Enhancements");
                 });
 
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Character", b =>

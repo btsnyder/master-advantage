@@ -20,7 +20,7 @@
         </div>
         @if (selectedWeapon != null)
         {
-            <div class="d-flex mb-2">
+            <div class="d-flex mb-2 gap-2">
                 <MudSelect T="WeaponStyle" Label="Style" AnchorOrigin="Origin.BottomCenter" Class="me-2" @bind-Value=selectedWeapon.Style ToStringFunc="@(s => s?.Name)">
                     @foreach (var style in weaponStyles)
                     {
@@ -45,6 +45,7 @@
             {
                 <MudTextField @bind-Value=selectedWeaponStyle.Name Variant="Variant.Outlined" Label="Name" Placeholder="New Weapon Style"  />
                 <MudTextField @bind-Value=selectedWeaponStyle.Description Variant="Variant.Outlined" Label="Description" Lines="4" />
+                <MudTextField @bind-Value=selectedWeaponStyle.Effect Variant="Variant.Outlined" Label="Effect" Lines="3" />
                 <MudButton OnClick="AddWeaponStyle" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
             }
             <MudTextField @bind-Value=selectedWeapon.Name Label="Name" Class="mb-2" />

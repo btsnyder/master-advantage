@@ -1,0 +1,67 @@
+﻿@inject DBService db
+
+@if (Item.Character != null)
+{
+    <CombatTraits Item="Item" />
+}
+<div class="d-flex">
+    <MudText Typo="Typo.h4" Class="mt-2">Weapons</MudText>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="@(() => WeaponsOpened.InvokeAsync())" />
+</div>
+<div class="d-flex my-2 gap-2">
+    <MudAutocomplete T="Weapon" Label="Search" @bind-Value="selectedWeapon" SearchFunc="@WeaponSearch" Clearable ResetValueOnEmptyText />
+    <MudIconButton Class="my-auto" Icon="@Icons.Material.Filled.Add" Disabled="@(selectedWeapon == null)" OnClick="AddSelectedWeapon" Variant="Variant.Filled" Color="Color.Success" />
+    <MudSpacer />
+    <MudSpacer />
+</div>
+<MudTable T="Weapon" Items="Item.Creature.Weapons">
+    <ColGroup>
+        <col />
+        <col />
+        <col />
+        <col />
+        <col width="50px" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Dmg</MudTh>
+        <MudTh>Range</MudTh>
+        <MudTh>Effects</MudTh>
+        <MudTh />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Dmg">@(string.Format("{0}{1}", context.Damage, context.DamageType.ToString().First()))</MudTd>
+        <MudTd DataLabel="Range">@context.Range</MudTd>
+        <MudTd DataLabel="Effects">
+            @foreach (var effect in context.GetEffects())
+            {
+                <MudChip T="string">@effect</MudChip>
+            }
+        </MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.Creature.Weapons.Remove(context)" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private Weapon? selectedWeapon { get; set; }
+
+    [Parameter] public EventCallback WeaponsOpened { get; set; }
+    [Parameter] public EncounterItem Item { get; set; }
+
+    private async Task<IEnumerable<Weapon>> WeaponSearch(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return await db.GetWeaponsAsync();
+        return await db.SearchWeaponsAsync(value);
+    }
+
+    private void AddSelectedWeapon()
+    {
+        Item.Creature.Weapons.Add(selectedWeapon!);
+        selectedWeapon = null;
+    }
+}

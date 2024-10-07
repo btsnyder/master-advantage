@@ -9,17 +9,20 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Components\WeaponType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Components\DamageType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\SpellClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\WeaponType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\DamageType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\DropItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Encounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\EncounterItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Character.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Creature.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\ICreature.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\Spell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Trade.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Weapon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\WeaponProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\SpellEnhancement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\WeaponStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers.cs" />
   </ItemGroup>

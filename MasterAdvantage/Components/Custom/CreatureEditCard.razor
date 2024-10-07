@@ -1,4 +1,4 @@
-﻿<MudCard Style="height: 70vh; width: 80vw">
+﻿<MudCard Style="height: 70vh; width: 80vw"> 
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar Color="Color.Secondary" Size="Size.Large">
@@ -14,50 +14,12 @@
     </MudCardHeader>
     <MudCardContent Class="overflow-scroll">
         <MudTabs Rounded="true" ApplyEffectsToContainer="true">
-            @if (Item.Character != null)
-            {
-                <MudTabPanel Text="Combat">
-                    <div class="d-flex flex-grow-1">
-                        <PropertyDisplay Title="Attack/Spell" Value="@((Item.Creature.Prime + Item.Character.CombatMastery).ToString())" />
-                        <PropertyDisplay Title="Save DC" Value="@((10 + Item.Creature.Prime + Item.Character.CombatMastery).ToString())" />
-                        <PropertyDisplay Title="Martial Check" Value="@(Math.Max(Item.Character.Athletics, Item.Character.Acrobatics).ToString())" />
-                        <div class="flex-1">
-                            <MudText Align="Align.Center" Typo="Typo.h4">Stamina</MudText>
-                            <MudPaper Outlined="true" Class="d-flex ms-2">
-                                <div class="d-flex flex-column">
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="@(() => Item.CurrentStamina++)" />
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="@(() => Item.CurrentStamina--)" />
-                                </div>
-                                <MudText Align="Align.Center" Typo="Typo.h4" Class="my-2 mx-auto">@(string.Format("{0}/{1}", Item.CurrentStamina, Item.Character.MaxStamina))</MudText>
-                                <div class="d-flex flex-column">
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="@(() => Item.Creature.MaxStamina++)" />
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="@(() => Item.Creature.MaxStamina--)" />
-                                </div>
-                            </MudPaper>
-                        </div>
-                        <div class="flex-1">
-                            <MudText Align="Align.Center" Typo="Typo.h4">Mana</MudText>
-                            <MudPaper Outlined="true" Class="d-flex ms-2">
-                                <div class="d-flex flex-column">
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="@(() => Item.CurrentMana++)" />
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="@(() => Item.CurrentMana--)" />
-                                </div>
-                                <MudText Align="Align.Center" Typo="Typo.h4" Class="my-2 mx-auto">@(string.Format("{0}/{1}", Item.CurrentMana, Item.Character.MaxMana))</MudText>
-                                <div class="d-flex flex-column">
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="@(() => Item.Creature.MaxMana++)" />
-                                    <MudIconButton Size="Size.Small" Class="my-auto ms-1" Variant="Variant.Text" Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="@(() => Item.Creature.MaxMana--)" />
-                                </div>
-                            </MudPaper>
-                        </div>
-                    </div>
-                    <div class="d-flex">
-                        <MudText Typo="Typo.h4" Class="mt-2">Weapons</MudText>
-                        <MudSpacer />
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="@(() => WeaponsOpened.InvokeAsync())" />
-                    </div>
-
-                </MudTabPanel>
-            }
+            <MudTabPanel Text="Martial">
+                <MartialTab Item="Item" WeaponsOpened="WeaponsOpened" />
+            </MudTabPanel>
+            <MudTabPanel Text="Spells">
+                <SpellTab Item="Item" SpellsOpened="SpellsOpened" />
+            </MudTabPanel>
             <MudTabPanel Text="Skills">
                 <MudText Typo="Typo.h4" Class="mt-2">Skills</MudText>
                 <MudDivider/>
@@ -93,4 +55,5 @@
     [Parameter] public EncounterItem Item { get; set; }
     [Parameter] public EventCallback CardClosed { get; set;}
     [Parameter] public EventCallback WeaponsOpened { get; set; }
+    [Parameter] public EventCallback SpellsOpened { get; set; }
 }

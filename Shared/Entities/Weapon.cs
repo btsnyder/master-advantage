@@ -1,4 +1,4 @@
-﻿using MasterAdvantage.Shared.Components;
+﻿using MasterAdvantage.Shared.Components.Enums;
 
 namespace MasterAdvantage.Shared.Entities
 {
@@ -20,6 +20,16 @@ namespace MasterAdvantage.Shared.Entities
         public override string ToString()
         {
             return Name;
+        }
+
+        public List<string> GetEffects()
+        {
+            List<string> effects = WeaponProperties.Select(w => w.Effects).Where(e => e != "").ToList();
+            if (!string.IsNullOrEmpty(Name))
+            {
+                effects.Add(Style.Effect);
+            }
+            return effects;
         }
     }
 }

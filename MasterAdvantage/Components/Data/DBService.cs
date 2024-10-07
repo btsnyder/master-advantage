@@ -1,10 +1,7 @@
 ﻿using MasterAdvantage.Shared.Components;
 using MasterAdvantage.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
-using Shared.Entities;
-using System.Diagnostics.Metrics;
-using static MudBlazor.CategoryTypes;
-using static MudBlazor.Colors;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace MasterAdvantage.Data
 {
@@ -24,7 +21,12 @@ namespace MasterAdvantage.Data
         #region Public methods
         public async Task<Encounter> GetEncounter(Guid id)
         {
-            var encounter = dbContext.Encounters.Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => ((Character)c).Trades).First(e => e.Id == id);
+            var encounter = dbContext.Encounters
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => ((Character)c).Trades)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.WeaponProperties)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.Style)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Spells).ThenInclude(s => s.Enhancements)
+                .First(e => e.Id == id);
             foreach (var i in encounter.Items)
             {
                 await dbContext.Entry(i).ReloadAsync();
@@ -35,7 +37,12 @@ namespace MasterAdvantage.Data
         }
         public List<Encounter> GetEncounters()
         {
-            return dbContext.Encounters.Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => ((Character)c).Trades).ToList();
+            return dbContext.Encounters
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => ((Character)c).Trades)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.WeaponProperties)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.Style)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Spells).ThenInclude(s => s.Enhancements)
+                .ToList();
         }
 
         public async Task<Encounter> AddEncounterAsync(Encounter encounter)
@@ -87,21 +94,7 @@ namespace MasterAdvantage.Data
             {
                 foreach (var item in encounter.Items)
                 {
-                    if (item.IsNPC)
-                    {
-                        if (dbContext.Creatures.Contains(item.Creature))
-                        {
-                            dbContext.Update(item.Creature);
-                        }
-                        else
-                        {
-                            dbContext.Add(item.Creature);
-                        }
-                    }
-                    else
-                    {
-                        dbContext.Update(item.Creature);
-                    }
+                    await UpdateCreature(item.Creature);
                     if (dbContext.EncounterItems.Contains(item))
                     {
                         dbContext.Update(item);
@@ -136,6 +129,10 @@ namespace MasterAdvantage.Data
                     {
                         dbContext.Update(trade);
                     }
+                }
+                foreach (var weapon in creature.Weapons)
+                {
+                    dbContext.Update(weapon);
                 }
                 await dbContext.SaveChangesAsync();
             }
@@ -247,6 +244,58 @@ namespace MasterAdvantage.Data
                 throw;
             }
             return weapon;
+        }
+
+        public async Task<List<Spell>> GetSpellsAsync()
+        {
+            return await dbContext.Spells.ToListAsync();
+        }
+
+        public async Task<List<Spell>> SearchSpellsAsync(string name)
+        {
+            return await dbContext.Spells.Where(s => s.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+        }
+
+        public async Task DeleteSpellEnhancementAsync(SpellEnhancement enhancement)
+        {
+            try
+            {
+                dbContext.SpellEnhancements.Remove(enhancement);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<SpellEnhancement> UpdateSpellEnhancement(SpellEnhancement enhancement)
+        {
+            try
+            {
+                dbContext.SpellEnhancements.Update(enhancement);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return enhancement;
+        }
+
+        public async Task<Spell> UpdateSpell(Spell spell)
+        {
+            EntityEntry<Spell> entitySpell;
+            try
+            {
+                entitySpell = dbContext.Spells.Update(spell);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return entitySpell.Entity;
         }
         #endregion
     }

@@ -1,4 +1,4 @@
-﻿namespace MasterAdvantage.Shared.Components
+﻿namespace MasterAdvantage.Shared.Components.Enums
 {
     public enum DamageType
     {

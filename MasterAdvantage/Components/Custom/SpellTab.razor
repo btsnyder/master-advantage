@@ -1,0 +1,67 @@
+﻿@inject DBService db
+
+@if (Item.Character != null)
+{
+    <CombatTraits Item="Item" />
+}
+<div class="d-flex">
+    <MudText Typo="Typo.h4" Class="mt-2">Spells</MudText>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="@(() => SpellsOpened.InvokeAsync())" />
+</div>
+<div class="d-flex my-2 gap-2">
+    <MudAutocomplete T="Spell" Label="Search" @bind-Value="selectedSpell" SearchFunc="@SpellSearch" Clearable ResetValueOnEmptyText />
+    <MudIconButton Class="my-auto" Icon="@Icons.Material.Filled.Add" Disabled="@(selectedSpell == null)" OnClick="AddSelectedSpell" Variant="Variant.Filled" Color="Color.Success" />
+    <MudSpacer />
+    <MudSpacer />
+</div>
+<MudTable T="Spell" Items="Item.Creature.Spells">
+    <ColGroup>
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col width="50px" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Cost</MudTh>
+        <MudTh>Range</MudTh>
+        <MudTh>Duration</MudTh>
+        <MudTh>Conc</MudTh>
+        <MudTh />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Dmg">@context.GetCost()</MudTd>
+        <MudTd DataLabel="Range">@context.Range</MudTd>
+        <MudTd DataLabel="Duration">@context.Duration</MudTd>
+        <MudTd DataLabel="Conc">
+            <MudIcon Icon="@(context.Concentration ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)" />
+        </MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.Creature.Spells.Remove(context)" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private Spell? selectedSpell { get; set; }
+
+    [Parameter] public EventCallback SpellsOpened { get; set; }
+    [Parameter] public EncounterItem Item { get; set; }
+
+    private async Task<IEnumerable<Spell>> SpellSearch(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return await db.GetSpellsAsync();
+        return await db.SearchSpellsAsync(value);
+    }
+
+    private void AddSelectedSpell()
+    {
+        Item.Creature.Spells.Add(selectedSpell!);
+        selectedSpell = null;
+    }
+}

@@ -21,6 +21,7 @@
         public int Intelligence { get; set; }
         public int Speed { get; set; }
         public int Jump { get; set; }
-        public List<Weapon> Weapons { get; set; }
+        public List<Weapon> Weapons { get; set; } = new();
+        public List<Spell> Spells { get; set; } = new();
     }
 }
