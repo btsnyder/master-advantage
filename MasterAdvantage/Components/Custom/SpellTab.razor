@@ -10,7 +10,7 @@
     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="@(() => SpellsOpened.InvokeAsync())" />
 </div>
 <div class="d-flex my-2 gap-2">
-    <MudAutocomplete T="Spell" Label="Search" @bind-Value="selectedSpell" SearchFunc="@SpellSearch" Clearable ResetValueOnEmptyText />
+    <MudAutocomplete T="Spell" Label="Search" @bind-Value="selectedSpell" SearchFunc="@SpellSearch" ToStringFunc="s => s?.Name" Clearable ResetValueOnEmptyText />
     <MudIconButton Class="my-auto" Icon="@Icons.Material.Filled.Add" Disabled="@(selectedSpell == null)" OnClick="AddSelectedSpell" Variant="Variant.Filled" Color="Color.Success" />
     <MudSpacer />
     <MudSpacer />
@@ -23,6 +23,7 @@
         <col />
         <col />
         <col width="50px" />
+        <col width="50px" />
     </ColGroup>
     <HeaderContent>
         <MudTh>Name</MudTh>
@@ -30,6 +31,7 @@
         <MudTh>Range</MudTh>
         <MudTh>Duration</MudTh>
         <MudTh>Conc</MudTh>
+        <MudTh />
         <MudTh />
     </HeaderContent>
     <RowTemplate>
@@ -41,12 +43,36 @@
             <MudIcon Icon="@(context.Concentration ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)" />
         </MudTd>
         <MudTd>
+            @if (focusedSpell == context)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.ExpandLess" OnClick="() => focusedSpell = null" />
+            } 
+            else
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.ExpandMore" OnClick="() => focusedSpell = context" />
+            }
+        </MudTd>
+        <MudTd>
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.Creature.Spells.Remove(context)" />
         </MudTd>
     </RowTemplate>
+    <ChildRowContent>
+        @if (focusedSpell == context)
+        {
+            <td colspan="7">
+                <MudText Class="ma-2">@Helpers.GetMarkdown(context.Description)</MudText>
+                <MudText>Enhancements</MudText>
+                @foreach(var enhancement in context.Enhancements)
+                {
+                    <MudText>@Helpers.GetMarkdown(string.Format("***{0}***: ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
+                }
+            </td>
+        }
+    </ChildRowContent>
 </MudTable>
 
-@code {
+    @code {
+    private Spell? focusedSpell { get; set; }
     private Spell? selectedSpell { get; set; }
 
     [Parameter] public EventCallback SpellsOpened { get; set; }

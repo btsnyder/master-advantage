@@ -13,10 +13,10 @@
         <div class="d-flex my-2">
             @if (selectedSpell == null)
             {
-                <MudAutocomplete T="Spell" Label="Spell" @bind-Value="selectedSpell" SearchFunc="@SpellSearch" Clearable="true" />
+                <MudAutocomplete T="Spell" Label="Spell" @bind-Value="selectedSpell" SearchFunc="@SpellSearch" Clearable="true" ToStringFunc="s => s?.Name" />
             }
             <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => selectedSpell = new()" Variant="Variant.Filled" Color="Color.Success" />
+            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="CreateSpell" Variant="Variant.Filled" Color="Color.Success" />
         </div>
         @if (selectedSpell != null)
         {
@@ -74,9 +74,14 @@
         return await db.SearchSpellsAsync(value);
     }
 
-    private void AddSpellEnhancement()
+    private async Task AddSpellEnhancement()
     {
-        selectedSpell!.Enhancements.Add(editEnhancement!);
+        if (selectedSpell!.Enhancements.Contains(editEnhancement!))
+        {
+            selectedSpell!.Enhancements.Add(editEnhancement!);
+            editEnhancement!.SpellId = selectedSpell.Id;
+        }
+        await db.UpdateSpellEnhancement(editEnhancement!);
         editEnhancement = null;
     }
 
@@ -90,5 +95,11 @@
     {
         selectedSpell!.Enhancements.Remove(enhancement);
         await db.DeleteSpellEnhancementAsync(enhancement);
+    }
+
+    private async Task CreateSpell()
+    {
+        selectedSpell = new();
+        await db.UpdateSpell(selectedSpell);
     }
 }

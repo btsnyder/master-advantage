@@ -9,5 +9,22 @@
         public int AP { get; set; }
         public int MP { get; set; }
         public string Description { get; set; } = "";
+        public string GetCost()
+        {
+            string cost = string.Empty;
+            if (AP > 0)
+            {
+                cost = string.Format("{0} AP", AP);
+                if (MP > 0)
+                {
+                    cost += " + ";
+                }
+            }
+            if (MP > 0)
+            {
+                cost += string.Format("{0} MP", MP);
+            }
+            return cost;
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using Markdig;
+using Microsoft.AspNetCore.Components;
+using System.Reflection;
 
 namespace MasterAdvantage.Shared
 {
@@ -20,6 +22,11 @@ namespace MasterAdvantage.Shared
         {
             PropertyInfo? property = obj.GetType().GetProperty(propertyName);
             property?.SetValue(obj, val);
+        }
+
+        public static MarkupString GetMarkdown(string s)
+        {
+            return (MarkupString)Markdown.ToHtml(s);
         }
     }
 }
