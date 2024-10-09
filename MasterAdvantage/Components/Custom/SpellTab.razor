@@ -15,14 +15,13 @@
     <MudSpacer />
     <MudSpacer />
 </div>
-<MudTable T="Spell" Items="Item.Creature.Spells">
+<MudTable T="Spell" Items="Item.Creature.Spells" OnRowClick="RowClickEvent" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc">
     <ColGroup>
         <col />
         <col />
         <col />
         <col />
         <col />
-        <col width="50px" />
         <col width="50px" />
     </ColGroup>
     <HeaderContent>
@@ -31,7 +30,6 @@
         <MudTh>Range</MudTh>
         <MudTh>Duration</MudTh>
         <MudTh>Conc</MudTh>
-        <MudTh />
         <MudTh />
     </HeaderContent>
     <RowTemplate>
@@ -43,16 +41,6 @@
             <MudIcon Icon="@(context.Concentration ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)" />
         </MudTd>
         <MudTd>
-            @if (focusedSpell == context)
-            {
-                <MudIconButton Icon="@Icons.Material.Filled.ExpandLess" OnClick="() => focusedSpell = null" />
-            } 
-            else
-            {
-                <MudIconButton Icon="@Icons.Material.Filled.ExpandMore" OnClick="() => focusedSpell = context" />
-            }
-        </MudTd>
-        <MudTd>
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.Creature.Spells.Remove(context)" />
         </MudTd>
     </RowTemplate>
@@ -61,17 +49,17 @@
         {
             <td colspan="7">
                 <MudText Class="ma-2">@Helpers.GetMarkdown(context.Description)</MudText>
-                <MudText>Enhancements</MudText>
+                <MudText Class="ma-2">Enhancements</MudText>
                 @foreach(var enhancement in context.Enhancements)
                 {
-                    <MudText>@Helpers.GetMarkdown(string.Format("***{0}***: ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
+                    <MudText Class="ma-2">@Helpers.GetMarkdown(string.Format("***{0}***: ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
                 }
             </td>
         }
     </ChildRowContent>
 </MudTable>
 
-    @code {
+@code {
     private Spell? focusedSpell { get; set; }
     private Spell? selectedSpell { get; set; }
 
@@ -89,5 +77,26 @@
     {
         Item.Creature.Spells.Add(selectedSpell!);
         selectedSpell = null;
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<Spell> tableRowClickEventArgs)
+    {
+        if (focusedSpell == null || focusedSpell != tableRowClickEventArgs.Item)
+        {
+            focusedSpell = tableRowClickEventArgs.Item;
+        }
+        else
+        {
+            focusedSpell = null;
+        }
+    }
+
+    private string SelectedRowClassFunc(Spell spell, int rowNumber)
+    {
+        if (spell == focusedSpell)
+        {
+            return "blue text-blue darken-3";
+        }
+        return "";
     }
 }

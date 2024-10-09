@@ -21,6 +21,15 @@
         public int Intelligence { get; set; }
         public int Speed { get; set; }
         public int Jump { get; set; }
+        public string Senses { get; set; } = "";
+        public string Languages { get; set; } = "";
+        public string Features { get; set; } = "";
+        public string Actions { get; set; } = "";
+        public string Enhancements { get; set; } = "";
+        public string Reactions { get; set; } = "";
+        public int Attack { get; set; }
+        public int SaveDC { get; set; }
+
         public List<Weapon> Weapons { get; set; } = new();
         public List<Spell> Spells { get; set; } = new();
     }

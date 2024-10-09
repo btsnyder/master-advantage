@@ -43,6 +43,12 @@
                     <TradeCard Character="Item.Character" />
                 }
             </MudTabPanel>
+            @if (Item.IsNPC)
+            {
+                <MudTabPanel Text="Monster">
+                    <MonsterTab Item="Item" />
+                </MudTabPanel>
+            }
         </MudTabs>
     </MudCardContent>
     <MudCardActions>

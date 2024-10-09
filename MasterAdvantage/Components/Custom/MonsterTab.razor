@@ -1,5 +1,51 @@
-﻿<h3>MonsterTab</h3>
+﻿<div class="d-flex justify-space-between">
+    <ActionPointEdit Item="Item" />
+    <MudToggleIconButton @bind-Toggled=editToggled Icon="@Icons.Material.Filled.Edit" ToggledIcon="@Icons.Material.Filled.Check" ToggledColor="Color.Success"/>
+</div>
+<div class="d-flex gap-2">
+    <MudNumericField Label="Attack" @bind-Value="Item.Creature.Attack" Variant="Variant.Outlined" ReadOnly="!editToggled" />
+    <MudNumericField Label="Save DC" @bind-Value="Item.Creature.SaveDC" Variant="Variant.Outlined" ReadOnly="!editToggled" />
+    <MudNumericField Label="Speed" @bind-Value="Item.Creature.Speed" Variant="Variant.Outlined" ReadOnly="!editToggled" />
+    <MudTextField Label="Senses" @bind-Value="Item.Creature.Senses" Variant="Variant.Outlined" ReadOnly="!editToggled" />
+    <MudTextField Label="Languages" @bind-Value="Item.Creature.Languages" Variant="Variant.Outlined" ReadOnly="!editToggled" />
+</div>
+@if (editToggled)
+{
+    
+    <MudTextField Label="Features" @bind-Value="Item.Creature.Features" Variant="Variant.Outlined" Lines="4"/>
+    <MudTextField Label="Actions" @bind-Value="Item.Creature.Actions" Variant="Variant.Outlined" Lines="4"/>
+    <MudTextField Label="Enhancements" @bind-Value="Item.Creature.Enhancements" Variant="Variant.Outlined" Lines="4"/>
+    <MudTextField Label="Reactions" @bind-Value="Item.Creature.Reactions" Variant="Variant.Outlined" Lines="4"/>
+}
+else
+{
+    @if (!string.IsNullOrEmpty(Item.Creature.Features))
+    {
+        <MudText Typo="Typo.h5" Class="mt-3">Features</MudText>
+        <MudDivider />
+        <MudText>@Helpers.GetMarkdown(Item.Creature.Features)</MudText>
+    }
+    @if (!string.IsNullOrEmpty(Item.Creature.Actions))
+    {
+        <MudText Typo="Typo.h5" Class="mt-3">Actions</MudText>
+        <MudDivider />
+        <MudText>@Helpers.GetMarkdown(Item.Creature.Actions)</MudText>
+    }
+    @if (!string.IsNullOrEmpty(Item.Creature.Enhancements))
+    {
+        <MudText Typo="Typo.h5" Class="mt-3">Enhancements</MudText>
+        <MudDivider />
+        <MudText>@Helpers.GetMarkdown(Item.Creature.Enhancements)</MudText>
+    }
+    @if (!string.IsNullOrEmpty(Item.Creature.Reactions))
+    {
+        <MudText Typo="Typo.h5" Class="mt-3">Reactions</MudText>
+        <MudDivider />
+        <MudText>@Helpers.GetMarkdown(Item.Creature.Reactions)</MudText>
+    }
+}
 
 @code {
-
+    private bool editToggled { get; set;}
+    [Parameter] public EncounterItem Item { get; set; }
 }

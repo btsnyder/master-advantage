@@ -1,0 +1,22 @@
+﻿<div class="d-flex">
+    <MudRating Class="my-auto" SelectedValue="@Item.ActionsUsed" SelectedValueChanged="ActionPointChanged" FullIcon="@Icons.Material.Filled.Square" EmptyIcon="@Icons.Material.Outlined.Square" Size="Size.Large"
+                MaxValue="@Item.Creature.ActionPoints" Color="Color.Info" />
+    <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ActionPointReset" />
+</div>
+
+@code {
+    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EventCallback EncounterItemUpdated { get; set; }
+
+    void ActionPointChanged(int value)
+    {
+        Item.ActionsUsed = value;
+        EncounterItemUpdated.InvokeAsync();
+    }
+
+    void ActionPointReset()
+    {
+        Item.ActionsUsed = 0;
+        EncounterItemUpdated.InvokeAsync();
+    }
+}

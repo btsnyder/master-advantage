@@ -26,7 +26,10 @@
                 <MudNumericField Label="MP" @bind-Value=selectedSpell.MP Variant="Variant.Outlined" />
             </div>
             <MudTextField @bind-Value=selectedSpell.Range Label="Range" Class="mb-2" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value=selectedSpell.Duration Label="Duration" Class="mb-2" Variant="Variant.Outlined" />
+            <div class="d-flex gap-2 mb-2">
+                <MudTextField @bind-Value=selectedSpell.Duration Label="Duration" Variant="Variant.Outlined" />
+                <MudCheckBox @bind-Value=selectedSpell.Concentration Label="Concentration" Class="my-auto"/>
+            </div>
             <MudTextField @bind-Value=selectedSpell.Description Label="Description" Class="mb-2" Lines="15" Variant="Variant.Outlined" />
             <div class="d-flex">
                 <MudText Class="my-auto">Enhancements</MudText>
@@ -76,7 +79,7 @@
 
     private async Task AddSpellEnhancement()
     {
-        if (selectedSpell!.Enhancements.Contains(editEnhancement!))
+        if (!selectedSpell!.Enhancements.Contains(editEnhancement!))
         {
             selectedSpell!.Enhancements.Add(editEnhancement!);
             editEnhancement!.SpellId = selectedSpell.Id;
@@ -100,6 +103,6 @@
     private async Task CreateSpell()
     {
         selectedSpell = new();
-        await db.UpdateSpell(selectedSpell);
+        selectedSpell = await db.UpdateSpell(selectedSpell);
     }
 }

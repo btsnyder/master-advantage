@@ -3,6 +3,7 @@ using System;
 using MasterAdvantage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterAdvantage.Migrations
 {
     [DbContext(typeof(MasterAdvantageContext))]
-    partial class MasterAdvantageContextModelSnapshot : ModelSnapshot
+    [Migration("20241008170423_AddMonsterProps")]
+    partial class AddMonsterProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -109,9 +112,6 @@ namespace MasterAdvantage.Migrations
                     b.Property<int>("Agility")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Attack")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Charisma")
                         .HasColumnType("INTEGER");
 
@@ -173,9 +173,6 @@ namespace MasterAdvantage.Migrations
                     b.Property<string>("Reactions")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("SaveDC")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Senses")
                         .IsRequired()

@@ -1,11 +1,21 @@
 ﻿<div class="flex-1">
     <MudText Align="Align.Center" Typo="Typo.h4">@Title</MudText>
     <MudPaper Outlined="true" Class="d-flex ms-2">
+        @if (Editable)
+        {
+            <MudIconButton Class="ma-1" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Remove" OnClick="@(() => ValueChanged.InvokeAsync(false))" />
+        }
         <MudText Align="Align.Center" Typo="Typo.h4" Class="my-2 mx-auto">@Value</MudText>
+        @if (Editable)
+        {
+            <MudIconButton Class="ma-1" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Add" OnClick="@(() => ValueChanged.InvokeAsync(true))" />
+        }
     </MudPaper>
 </div>
 
 @code {
     [Parameter] public string Title { get; set; }
     [Parameter] public string Value { get; set; }
+    [Parameter] public bool Editable { get; set; }
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 }

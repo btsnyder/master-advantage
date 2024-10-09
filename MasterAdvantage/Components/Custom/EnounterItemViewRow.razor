@@ -47,11 +47,7 @@
 </MudTd>
 <MudHidden Breakpoint="Breakpoint.SmAndDown">
     <MudTd DataLabel="Action Points">
-        <div class="d-flex" hidden="@IsHidden()">
-            <MudRating Class="my-auto" SelectedValue="@Item.ActionsUsed" SelectedValueChanged="ActionPointChanged" FullIcon="@Icons.Material.Filled.Square" EmptyIcon="@Icons.Material.Outlined.Square" Size="Size.Large" 
-                MaxValue="@Item.Creature.ActionPoints" Color="Color.Info"/>
-            <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ActionPointReset" />
-        </div>
+        <ActionPointEdit Item="Item" EncounterItemUpdated="EncounterItemUpdated" />
     </MudTd>
     <MudTd>
         <MudIconButton Icon="@Icons.Material.Filled.Person" OnClick="@(() => ViewPersonClicked.InvokeAsync(Item))" />
@@ -86,18 +82,6 @@
     bool IsHidden()
     {
         return Item.IsNPC && !GMView;
-    }
-
-    void ActionPointChanged(int value)
-    {
-        Item.ActionsUsed = value;
-        EncounterItemUpdated.InvokeAsync();
-    }
-
-    void ActionPointReset()
-    {
-        Item.ActionsUsed = 0;
-        EncounterItemUpdated.InvokeAsync();
     }
 
     void EncounterItemHidden()

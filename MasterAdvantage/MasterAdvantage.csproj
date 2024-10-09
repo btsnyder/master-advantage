@@ -6,10 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="Components\Custom\MonsterTab.razor" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.37.0" />
@@ -32,17 +28,10 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Components\Custom\ConditionsEdit.razor" />
-    <_ContentIncludedByDefault Remove="Components\Custom\MonsterTab.razor" />
   </ItemGroup>
 
 
   <ItemGroup>
     <None Include="Components\Custom\ConditionsEdit.razor" />
-    <None Include="Components\Custom\MonsterTab.razor" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Components\Custom\MonsterTab.razor" />
   </ItemGroup>
 </Project>
