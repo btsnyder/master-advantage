@@ -1,0 +1,136 @@
+﻿@page "/spells"
+@inject DBService db
+
+<MudTable T="Spell" Items="Spells" OnRowClick="RowClickEvent" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" Filter="new Func<Spell,bool>(SpellFilter)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Spells</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" Class="ms-4" OnClick="NewSpellClicked">New Spell</MudButton>
+    </ToolBarContent>
+    <ColGroup>
+        <col />
+        <col />
+        <col />
+        <col />
+        <col style="width: 75px" />
+        <col style="width: 50px" />
+        <col style="width: 50px" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Cost</MudTh>
+        <MudTh>Range</MudTh>
+        <MudTh>Duration</MudTh>
+        <MudTh>Concentration</MudTh>
+        <MudTh />
+        <MudTh />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Cost">@context.GetCost()</MudTd>
+        <MudTd DataLabel="Range">@context.Range</MudTd>
+        <MudTd DataLabel="Duration">@context.Duration</MudTd>
+        <MudTd DataLabel="Concentration" Class="d-flex justify-center"><MudCheckBox Disabled="true" Value="@context.Concentration"/></MudTd>
+        <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => SpellEditClicked(context)" /></MudTd>
+        <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => SpellDeleteClicked(context)" /></MudTd>
+    </RowTemplate>
+    <ChildRowContent>
+        @if (focusedSpell == context)
+        {
+            <td colspan="7">
+                <MudText Class="ma-2">@Helpers.GetMarkdown(context.Description)</MudText>
+                @if (context.Enhancements.Count > 0)
+                {
+                    <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
+                    <MudDivider />
+                    @foreach (var enhancement in context.Enhancements)
+                    {
+                        <MudText Class="ma-2">@Helpers.GetMarkdown(string.Format("***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
+                    }
+                }
+            </td>
+        }
+    </ChildRowContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudOverlay @bind-Visible="spellEditOpen" DarkBackground>
+    <MudPaper>
+        <MudDrawer Open="true" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+            <SpellEdit CardClosed="SpellEditClosed" SelectedSpell="selectedSpell" CloseAfterSave="true"/>
+        </MudDrawer>
+    </MudPaper>
+</MudOverlay>
+
+@code {
+    private bool spellEditOpen { get; set; }
+    private Spell? selectedSpell { get; set; }
+    private Spell? focusedSpell { get; set; }
+    private string search { get; set; }
+    private IEnumerable<Spell> Spells = new List<Spell>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Spells = await db.GetSpellsAsync();
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<Spell> tableRowClickEventArgs)
+    {
+        if (focusedSpell == null || focusedSpell != tableRowClickEventArgs.Item)
+        {
+            focusedSpell = tableRowClickEventArgs.Item;
+        }
+        else
+        {
+            focusedSpell = null;
+        }
+    }
+
+    private string SelectedRowClassFunc(Spell spell, int rowNumber)
+    {
+        if (spell == focusedSpell)
+        {
+            return "blue text-blue darken-3";
+        }
+        return "";
+    }
+
+    private bool SpellFilter(Spell spell) => SpellSearch(spell, search);
+
+    private bool SpellSearch(Spell spell, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (spell.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task NewSpellClicked()
+    {
+        selectedSpell = new();
+        selectedSpell = await db.UpdateSpell(selectedSpell);
+        spellEditOpen = true;
+    }
+
+    private void SpellEditClicked(Spell spell)
+    {
+        selectedSpell = spell;
+        spellEditOpen = true;
+    }
+
+    private async Task SpellDeleteClicked(Spell spell)
+    {
+        await db.DeleteSpell(spell);
+        Spells = await db.GetSpellsAsync();
+    }
+
+    private async Task SpellEditClosed()
+    {
+        Spells = await db.GetSpellsAsync();
+        spellEditOpen = false;
+    }
+}

@@ -248,7 +248,7 @@ namespace MasterAdvantage.Data
 
         public async Task<List<Spell>> GetSpellsAsync()
         {
-            return await dbContext.Spells.ToListAsync();
+            return await dbContext.Spells.OrderBy(s => s.Name).Include(s => s.Enhancements).ToListAsync();
         }
 
         public async Task<List<Spell>> SearchSpellsAsync(string name)
@@ -296,6 +296,19 @@ namespace MasterAdvantage.Data
                 throw;
             }
             return entitySpell.Entity;
+        }
+
+        public async Task DeleteSpell(Spell spell)
+        {
+            try
+            {
+                dbContext.Spells.Remove(spell);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #endregion
     }
