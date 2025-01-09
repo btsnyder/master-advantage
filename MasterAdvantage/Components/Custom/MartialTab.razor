@@ -34,7 +34,7 @@
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Dmg">@(string.Format("{0}{1}", context.Damage, context.DamageType.ToString().First()))</MudTd>
         <MudTd DataLabel="Range">@context.Range</MudTd>
-        <MudTd DataLabel="Effects">
+        <MudTd DataLabel="Effects" Class="d-flex">
             @foreach (var effect in context.GetEffects())
             {
                 <MudChip T="string">@effect</MudChip>

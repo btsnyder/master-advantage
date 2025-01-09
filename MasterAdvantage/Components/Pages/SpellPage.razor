@@ -39,14 +39,14 @@
         @if (focusedSpell == context)
         {
             <td colspan="7">
-                <MudText Class="ma-2">@Helpers.GetMarkdown(context.Description)</MudText>
+                <div class="ms-2"><MudMarkdown Value="@context.Description" /></div>
                 @if (context.Enhancements.Count > 0)
                 {
                     <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
                     <MudDivider />
                     @foreach (var enhancement in context.Enhancements)
                     {
-                        <MudText Class="ma-2">@Helpers.GetMarkdown(string.Format("***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
+                        <div class="ma-2"><MudMarkdown Value="@string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description)" /></div>
                     }
                 }
             </td>
