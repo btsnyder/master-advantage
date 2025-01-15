@@ -4,85 +4,112 @@
 @implements IDisposable
 @using System.Timers;
 
-<MudTable T="EncounterItem" Items="encounter.Items.Where(i => gmView || !i.Hidden).OrderByDescending(i => i.Initiative)" ApplyButtonPosition="TableApplyButtonPosition.End" EditButtonPosition="TableEditButtonPosition.End" 
-        EditTrigger="TableEditTrigger.EditButton" Class="mb-4" OnCommitEditClick="SaveEncounter" RowClassFunc="@((encounter, index) => encounter.RowClass)">
-    <ColGroup>
-        <col style="width:5%" />
-        <col style="width:50px;" />
-        <col />
-        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudTable T="EncounterItem" Items="encounter.Items.Where(i => gmView || !i.Hidden).OrderByDescending(i => i.Initiative)" Class="mb-4" RowClassFunc="@((encounter, index) => encounter.RowClass)">
+        <ColGroup>
+            <col style="width:5%" />
+            <col style="width:50px;" />
+            <col />
             <col />
             <col style="width:5%" />
             <col style="width:5%" />
             <col style="width:5%" />
-        </MudHidden>
-        <col />
-        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <col />
             <col style="width:150px;" />
             <col style="width:50px;" />
             <col style="width:50px;" />
-            <col style="width:50px;" />
-        </MudHidden>
-    </ColGroup>
-    <HeaderContent>
-        <MudTh>
-            Init
-            <MudToggleIconButton Toggled="@editInitative" ToggledChanged="InitativeToggled" Size="Size.Small" Class="my-auto" 
-                                     Icon="@Icons.Material.Filled.Edit" 
-                                     ToggledIcon="@Icons.Material.Filled.Check" ToggledColor="@Color.Success"/>
-        </MudTh>
-        <MudTh />
-        <MudTh>Name</MudTh>
-        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>
+                Init
+                <MudToggleIconButton Toggled="@editInitative" ToggledChanged="InitativeToggled" Size="Size.Small" Class="my-auto" 
+                                        Icon="@Icons.Material.Filled.Edit" 
+                                        ToggledIcon="@Icons.Material.Filled.Check" ToggledColor="@Color.Success"/>
+            </MudTh>
+            <MudTh />
+            <MudTh>Name</MudTh>
             <MudTh>Player Name</MudTh>
             <MudTh>PD</MudTh>
             <MudTh>MD</MudTh>
             <MudTh>Conditions</MudTh>
-        </MudHidden>
-        <MudTh>HP</MudTh>
-        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <MudTh>HP</MudTh>
             <MudTh>Action Points</MudTh>
             <MudTh />
             <MudTh />
-        </MudHidden>
-    </HeaderContent>
-    <RowTemplate>
-        <EnounterItemViewRow Item="context" EditInitative="editInitative" GMView="gmView" CreatureCopied="CopyCreature" CreatureRemoved="@((item) => RemoveCreature(item))"
-            EncounterItemUpdated="SaveEncounter" ViewPersonClicked="ViewPersonClicked"/>
-    </RowTemplate>
-    <RowEditingTemplate>
-        <EncounterItemEditRow Item="context" />
-    </RowEditingTemplate>
-    <EditButtonContent Context="button">
-        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" />
-    </EditButtonContent>
-</MudTable>
-<div class="d-flex">
-    <MudSwitch @bind-Value="gmView" Color="Color.Info" Class="my-auto">GM View</MudSwitch>
-    <MudSwitch @bind-Value="autoSave" Color="Color.Info" Class="my-auto">Auto Save</MudSwitch>
-    <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto">Auto Load</MudSwitch>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="my-auto" @onclick="SaveEncounter">
-        Save
-    </MudButton>
-    <MudSpacer/>
-    <MudSpacer />
-    <MudSpacer />
-    <MudAutocomplete T="string" @bind-Value="creatureSearch" SearchFunc="CreatureSearch" CoerceValue="true" CoerceText="false"
-                     AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Class="my-2 me-6" />
-    <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
-</div>
-<MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
-    <MudPaper>
-        <MudDrawer @bind-Open="weaponOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
-            <WeaponEdit CardClosed="() => weaponOverlayVisible = false" />
-        </MudDrawer>
-        <MudDrawer @bind-Open="spellOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
-            <SpellEdit CardClosed="() => spellOverlayVisible = false" />
-        </MudDrawer>
-        <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" SpellsOpened="() => spellOverlayVisible = true"/>
-    </MudPaper>
-</MudOverlay>
-
+        </HeaderContent>
+        <RowTemplate>
+            <EnounterItemViewRow Item="context" EditInitative="editInitative" GMView="gmView" CreatureCopied="CopyCreature" CreatureRemoved="@((item) => RemoveCreature(item))"
+                EncounterItemUpdated="SaveEncounter" ViewPersonClicked="ViewPersonClicked"/>
+        </RowTemplate>
+        <EditButtonContent Context="button">
+            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" />
+        </EditButtonContent>
+    </MudTable>
+    <div class="d-flex flex-wrap">
+        <MudSwitch @bind-Value="gmView" Color="Color.Info" Class="my-auto">GM View</MudSwitch>
+        <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto">Auto Load</MudSwitch>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="my-auto" @onclick="SaveEncounter">
+            Save
+        </MudButton>
+        <MudSpacer/>
+        <MudSpacer />
+        <MudSpacer />
+        <MudAutocomplete T="string" @bind-Value="creatureSearch" SearchFunc="CreatureSearch" CoerceValue="true" CoerceText="false"
+                        AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" Class="my-2 me-6" />
+        <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
+    </div>
+    <MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
+        <MudPaper>
+            <MudDrawer @bind-Open="weaponOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+                <WeaponEdit CardClosed="() => weaponOverlayVisible = false" />
+            </MudDrawer>
+            <MudDrawer @bind-Open="spellOverlayVisible" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+                <SpellEdit CardClosed="() => spellOverlayVisible = false" />
+            </MudDrawer>
+            <CreatureEditCard Item="editItem" CardClosed="CardClosed" WeaponsOpened="() => weaponOverlayVisible = true" SpellsOpened="() => spellOverlayVisible = true"/>
+        </MudPaper>
+    </MudOverlay>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.MdAndUp">
+    <div class="mud-table mud-elevation-1">
+        <div class="mud-table-container">
+            <table class="mud-table-root">
+                <colgroup>
+                    <col style="width:5%" />
+                    <col />
+                    <col />
+                </colgroup>
+                <thead class="mud-table-head">
+                    <tr class="mud-table-row">
+                        <th class="mud-table-cell">Init</th>
+                        <th class="mud-table-cell">Name</th>
+                        <th class="mud-table-cell">HP</th>
+                    </tr>
+                </thead>
+                <tbody class="mud-table-body">
+                    @foreach(EncounterItem item in encounter.Items.OrderByDescending(i => i.Initiative).Where(i => !i.Hidden))
+                    {
+                        <tr class="mud-table-row">
+                            <th class="mud-table-cell">@item.Initiative</th>
+                            <th class="mud-table-cell">
+                                <div class="d-flex gap-4">
+                                    <MudAvatar>
+                                        <MudImage Src="@("images/" + item.Creature.ImageSrc)" />
+                                    </MudAvatar>
+                                    <MudText Class="my-auto">@item.Creature.Name</MudText>
+                                </div>
+                            </th>
+                            <th class="mud-table-cell">
+                                <HealthEdit Item="item" GMView="false" TextSize="textSize" />
+                            </th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto mb-5">Auto Load</MudSwitch>
+</MudHidden>
 
 @code {
     private Timer _timer = new Timer(1000);
@@ -92,7 +119,6 @@
     private bool spellOverlayVisible = false;
     private bool editInitative;
     private bool gmView;
-    private bool autoSave;
     private bool autoLoad;
     private string creatureSearch = "";
     private EncounterItem? editItem;
@@ -114,8 +140,6 @@
     {
         InvokeAsync(async () =>
         {
-            if (autoSave)
-                await SaveEncounter();
             if (autoLoad)
                 await RefreshEncounter();
         });

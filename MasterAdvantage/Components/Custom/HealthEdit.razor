@@ -8,9 +8,9 @@
 }
 else if (!Item.IsNPC)
 {
-    <div class="d-flex">
-        <MudProgressLinear Style="width: 75px;" Class="my-auto me-2" Color="@GetHealthColor()" Rounded="true" Size="Size.Large" Value="@Item.CurrentHP" Max="@Item.Creature.MaxHP" />
-        <div>
+    <div class="d-flex gap-2">
+        <MudProgressLinear Style="width: 75px;" Class="my-auto mx-auto" Color="@GetHealthColor()" Rounded="true" Size="Size.Large" Value="@Item.CurrentHP" Max="@Item.Creature.MaxHP" />
+        <div class="mx-auto">
             <MudText Align="Align.Center" Typo="Typo.body2">@Item.CurrentHP</MudText>
             <MudDivider Style="border-color: white;"/>
             <MudText Align="Align.Center" Typo="Typo.body2">@Item.Creature.MaxHP</MudText>

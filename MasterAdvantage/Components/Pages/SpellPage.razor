@@ -1,69 +1,121 @@
 ﻿@page "/spells"
 @inject DBService db
 
-<MudTable T="Spell" Items="Spells" OnRowClick="RowClickEvent" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" Filter="new Func<Spell,bool>(SpellFilter)">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Spells</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" Class="ms-4" OnClick="NewSpellClicked">New Spell</MudButton>
-    </ToolBarContent>
-    <ColGroup>
-        <col />
-        <col />
-        <col />
-        <col />
-        <col style="width: 75px" />
-        <col style="width: 50px" />
-        <col style="width: 50px" />
-    </ColGroup>
-    <HeaderContent>
-        <MudTh>Name</MudTh>
-        <MudTh>Cost</MudTh>
-        <MudTh>Range</MudTh>
-        <MudTh>Duration</MudTh>
-        <MudTh>Concentration</MudTh>
-        <MudTh />
-        <MudTh />
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Cost">@context.GetCost()</MudTd>
-        <MudTd DataLabel="Range">@context.Range</MudTd>
-        <MudTd DataLabel="Duration">@context.Duration</MudTd>
-        <MudTd DataLabel="Concentration" Class="d-flex justify-center"><MudCheckBox Disabled="true" Value="@context.Concentration"/></MudTd>
-        <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => SpellEditClicked(context)" /></MudTd>
-        <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => SpellDeleteClicked(context)" /></MudTd>
-    </RowTemplate>
-    <ChildRowContent>
-        @if (focusedSpell == context)
-        {
-            <td colspan="7">
-                <div class="ms-2"><MudMarkdown Value="@context.Description" /></div>
-                @if (context.Enhancements.Count > 0)
-                {
-                    <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
-                    <MudDivider />
-                    @foreach (var enhancement in context.Enhancements)
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudTable T="Spell" Items="Spells" OnRowClick="RowClickEvent" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" Filter="new Func<Spell,bool>(SpellFilter)">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Spells</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" Class="ms-4" OnClick="NewSpellClicked">New Spell</MudButton>
+        </ToolBarContent>
+        <ColGroup>
+            <col />
+            <col />
+            <col />
+            <col />
+            <col style="width: 75px" />
+            <col style="width: 50px" />
+            <col style="width: 50px" />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Cost</MudTh>
+            <MudTh>Range</MudTh>
+            <MudTh>Duration</MudTh>
+            <MudTh>Concentration</MudTh>
+            <MudTh />
+            <MudTh />
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Cost">@context.GetCost()</MudTd>
+            <MudTd DataLabel="Range">@context.Range</MudTd>
+            <MudTd DataLabel="Duration">@context.Duration</MudTd>
+            <MudTd DataLabel="Concentration" Class="d-flex justify-center"><MudCheckBox Disabled="true" Value="@context.Concentration"/></MudTd>
+            <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => SpellEditClicked(context)" /></MudTd>
+            <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => SpellDeleteClicked(context)" /></MudTd>
+        </RowTemplate>
+        <ChildRowContent>
+            @if (focusedSpell == context)
+            {
+                <td colspan="7">
+                    <div class="ms-2"><MudMarkdown Value="@context.Description" /></div>
+                    @if (context.Enhancements.Count > 0)
                     {
-                        <div class="ma-2"><MudMarkdown Value="@string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description)" /></div>
+                        <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
+                        <MudDivider />
+                        @foreach (var enhancement in context.Enhancements)
+                        {
+                            <div class="ma-2"><MudMarkdown Value="@string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description)" /></div>
+                        }
                     }
-                }
-            </td>
-        }
-    </ChildRowContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
+                </td>
+            }
+        </ChildRowContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    <MudOverlay @bind-Visible="spellEditOpen" DarkBackground>
+        <MudPaper>
+            <MudDrawer Open="true" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+                <SpellEdit CardClosed="SpellEditClosed" SelectedSpell="selectedSpell" CloseAfterSave="true"/>
+            </MudDrawer>
+        </MudPaper>
+    </MudOverlay>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.MdAndUp">
+    <div class="mud-table mud-elevation-1">
+        <div class="mud-toolbar mud-toolbar-gutters mud-table-toolbar">
+            <MudText Typo="Typo.h6">Spells</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </div>
+        <div class="mud-table-container">
+            <table class="mud-table-root">
+                <colgroup>
+                    <col />
+                    <col />
+                    <col />
+                </colgroup>
+                <thead class="mud-table-head">
+                    <tr class="mud-table-row">
+                        <th class="mud-table-cell">Name</th>
+                        <th class="mud-table-cell">Cost</th>
+                    </tr>
+                </thead>
+                <tbody class="mud-table-body">
+                    @foreach(Spell spell in Spells.OrderBy(s => s.Name).Where(s => SpellFilter(s)))
+                    {
+                        <tr class=@(GetMobileRowClass(spell)) @onclick="() => MobileRowClicked(spell)">
+                            <td class="mud-table-cell">@spell.Name</td>
+                            <td class="mud-table-cell">@spell.GetCost()</td>
+                        </tr>
+                        @if(focusedSpell == spell)
+                        {
+                            <tr>
+                                <td colspan="7">
+                                    <div class="ms-2"><MudMarkdown Value="@spell.Description" /></div>
+                                    @if (spell.Enhancements.Count > 0)
+                                    {
+                                        <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
+                                        <MudDivider />
+                                        @foreach (var enhancement in spell.Enhancements)
+                                        {
+                                            <div class="ma-2"><MudMarkdown Value="@string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description)" /></div>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</MudHidden>
 
-<MudOverlay @bind-Visible="spellEditOpen" DarkBackground>
-    <MudPaper>
-        <MudDrawer Open="true" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
-            <SpellEdit CardClosed="SpellEditClosed" SelectedSpell="selectedSpell" CloseAfterSave="true"/>
-        </MudDrawer>
-    </MudPaper>
-</MudOverlay>
 
 @code {
     private bool spellEditOpen { get; set; }
@@ -133,4 +185,20 @@
         Spells = await db.GetSpellsAsync();
         spellEditOpen = false;
     }
+
+    private void MobileRowClicked(Spell spell)
+    {
+        if (focusedSpell == null || focusedSpell != spell)
+        {
+            focusedSpell = spell;
+        }
+        else
+        {
+            focusedSpell = null;
+        }
+    }
+
+    private string GetMobileRowClass(Spell spell) {
+        return "mud-table-row cursor-pointer " + SelectedRowClassFunc(spell, 0);
+    } 
 }
