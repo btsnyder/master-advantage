@@ -10,6 +10,12 @@
     <link rel="icon" type="image/ico" href="favicon.ico" />
     <link href="_content/MudBlazor.Markdown/MudBlazor.Markdown.min.css" rel="stylesheet" />
     <HeadOutlet @rendermode="InteractiveServer" />
+
+    <style>
+        body {
+            touch-action: manipulation; /* Prevents double-tap zoom */
+        }
+    </style>
 </head>
 
 <body>
@@ -17,6 +23,17 @@
     <script src="_framework/blazor.web.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_content/MudBlazor.Markdown/MudBlazor.Markdown.min.js"></script>
+    <script>
+        let lastTouchTime = 0;
+
+        document.addEventListener('touchstart', (event) => {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastTouchTime < 300) {
+                event.preventDefault(); // Prevent zoom if double-tap detected
+            }
+            lastTouchTime = currentTime;
+        });
+    </script>
 </body>
 
 </html>

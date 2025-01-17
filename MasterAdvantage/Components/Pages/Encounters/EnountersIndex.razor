@@ -77,7 +77,7 @@
                 <colgroup>
                     <col style="width:5%" />
                     <col />
-                    <col />
+                    <col style="width:35%"/>
                 </colgroup>
                 <thead class="mud-table-head">
                     <tr class="mud-table-row">
@@ -89,7 +89,7 @@
                 <tbody class="mud-table-body">
                     @foreach(EncounterItem item in encounter.Items.OrderByDescending(i => i.Initiative).Where(i => !i.Hidden))
                     {
-                        <tr class="mud-table-row">
+                        <tr class="mud-table-row cursor-pointer" @onclick="() => ViewPersonClicked(item)">
                             <th class="mud-table-cell">@item.Initiative</th>
                             <th class="mud-table-cell">
                                 <div class="d-flex gap-4">
@@ -109,6 +109,11 @@
         </div>
     </div>
     <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto mb-5">Auto Load</MudSwitch>
+    <MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
+        <MudPaper>
+            <MobileCreatureEditCard Item="editItem" CardClosed="CardClosed"/>
+        </MudPaper>
+    </MudOverlay>
 </MudHidden>
 
 @code {
@@ -157,7 +162,7 @@
             encounter = db.GetEncounters().First();
         else
             encounter = await db.GetEncounter(encounter.Id);
-        StateHasChanged();
+        StateHasChanged(); 
     }
 
     async Task CopyCreature(EncounterItem item)

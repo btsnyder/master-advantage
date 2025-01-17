@@ -1,0 +1,106 @@
+<MudCard Style="height: 70vh; width: 80vw"> 
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Color="Color.Secondary" Size="Size.Large">
+                <MudImage Src="@("images/" + Item.Creature.ImageSrc)" />
+            </MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@Item.Creature.Name</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="() => CardClosed.InvokeAsync()" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent Class="d-flex overflow-scroll gap-4 flex-column">
+        <MudTabs ApplyEffectsToContainer="true" PanelClass="pa-6" MinimumTabWidth="40px">
+            <MudTabPanel Text="Basics">
+                <MudGrid>
+                    <MudItem xs="12" Class="pt-2">
+                        <MudText Align="Align.Center">HP</MudText>
+                    </MudItem>
+                    <MudItem xs="3" Class="pt-2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.CurrentHP--"/>
+                    </MudItem>
+                    <MudItem xs="6" Class="pt-2">
+                        <HealthEdit Item="Item" GMView="false" TextSize="Typo.h6" />
+                    </MudItem>
+                    <MudItem xs="3" Class="pt-2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="() => Item.CurrentHP++"/>
+                    </MudItem>
+                    <MudDivider Class="mt-4"/>
+                    <MudItem xs="12" Class="pt-2">
+                        <MudText Align="Align.Center">Mana</MudText>
+                    </MudItem>
+                    <MudItem xs="3" Class="pt-2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.CurrentMana--"/>
+                    </MudItem>
+                    <MudItem xs="6" Class="pt-2">
+                        <div class="d-flex gap-2">
+                            <MudProgressLinear Class="my-auto mx-auto" Color="Color.Info" Rounded="true" Size="Size.Large" Value="@Item.CurrentMana" Max="@Item.Creature.MaxMana" />
+                            <div class="mx-auto">
+                                <MudText Align="Align.Center" Typo="Typo.body2">@Item.CurrentMana</MudText>
+                                <MudDivider Style="border-color: white;"/>
+                                <MudText Align="Align.Center" Typo="Typo.body2">@Item.Creature.MaxMana</MudText>
+                            </div>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="3" Class="pt-2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="() => Item.CurrentMana++"/>
+                    </MudItem>
+                    <MudDivider Class="mt-4"/>
+                    <MudItem xs="12" Class="pt-2">
+                        <MudText Align="Align.Center">Stamina</MudText>
+                    </MudItem>
+                    <MudItem xs="3" Class="pt-2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.CurrentStamina--"/>
+                    </MudItem>
+                    <MudItem xs="6" Class="pt-2">
+                        <MudText Align="Align.Center" Typo="Typo.h4">@Item.CurrentStamina</MudText>
+                    </MudItem>
+                    <MudItem xs="3" Class="pt-2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="() => Item.CurrentStamina++"/>
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            <MudTabPanel Text="Combat">
+                <MudStack>
+                    <div class="d-flex gap-4 justify-end">
+                        <MudText Class="my-auto">AP</MudText>
+                        <ActionPointEdit Item="Item" />
+                    </div>
+                    <div class="d-flex gap-4 justify-end">
+                        <MudText Class="my-auto">Attack/Spell Check</MudText>
+                        <MudPaper Outlined="true" Class="d-flex px-4 py-2">
+                            <MudText Typo="Typo.h6">@(Item.Creature.Prime + Item.Character?.CombatMastery)</MudText>
+                        </MudPaper>
+                    </div>
+                    <div class="d-flex gap-4 justify-end">
+                        <MudText Class="my-auto">Save DC</MudText>
+                        <MudPaper Outlined="true" Class="d-flex px-4 py-2">
+                            <MudText Typo="Typo.h6">@(10 + Item.Creature.Prime + Item.Character?.CombatMastery)</MudText>
+                        </MudPaper>
+                    </div>
+                    <MudText Typo="Typo.h6">Attacks</MudText>
+                    <MudDivider />
+                    @if(!Item.IsNPC)
+                    {
+                        @foreach(var weapon in Item.Creature.Weapons)
+                        {
+                            <div class="d-flex">
+                                <MudText>@weapon.Name</MudText>
+                                <MudText>@weapon.Damage</MudText>
+                                <MudText>@weapon.DamageType</MudText>
+                            </div>
+                        }
+                    }
+                </MudStack>
+            </MudTabPanel>
+        </MudTabs>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EventCallback CardClosed { get; set;}
+}

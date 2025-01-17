@@ -1,6 +1,6 @@
 ﻿@if (GMView)
 {
-    <div class="d-flex">
+    <div class="@("d-flex " + Class)">
         <MudNumericField T="int" Typo="@TextSize" Class="me-4" Style="font-size: 30px;" Value="Item.CurrentHP" ValueChanged="CurrentHPChanged" Required Max="Item.Creature.MaxHP" />
         <MudText Typo="@TextSize">/</MudText>
         <MudText Typo="@TextSize" Class="ms-4" Style="font-size: 30px;">@Item.Creature.MaxHP</MudText>
@@ -8,8 +8,8 @@
 }
 else if (!Item.IsNPC)
 {
-    <div class="d-flex gap-2">
-        <MudProgressLinear Style="width: 75px;" Class="my-auto mx-auto" Color="@GetHealthColor()" Rounded="true" Size="Size.Large" Value="@Item.CurrentHP" Max="@Item.Creature.MaxHP" />
+    <div class="@("d-flex gap-2 " + Class)">
+        <MudProgressLinear Class="my-auto mx-auto" Color="@GetHealthColor()" Rounded="true" Size="Size.Large" Value="@Item.CurrentHP" Max="@Item.Creature.MaxHP" />
         <div class="mx-auto">
             <MudText Align="Align.Center" Typo="Typo.body2">@Item.CurrentHP</MudText>
             <MudDivider Style="border-color: white;"/>
@@ -19,7 +19,7 @@ else if (!Item.IsNPC)
 }
 else
 {
-    <MudChip T="string" Color="@GetHealthColor()" Class="d-flex flex-grow-1" />
+    <MudChip T="string" Color="@GetHealthColor()" Class="@("d-flex flex-grow-1 " + Class)" />
 }
 
 @code {
@@ -27,6 +27,7 @@ else
     [Parameter] public bool GMView { get; set; }
     [Parameter] public Typo TextSize { get; set; }
     [Parameter] public EventCallback EncounterItemChanged { get; set; }
+    [Parameter] public string Class { get; set;} = "";
 
     Color GetHealthColor()
     {
