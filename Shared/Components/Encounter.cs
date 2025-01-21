@@ -3,6 +3,7 @@
     public class Encounter
     {
         public Guid Id { get; set; }
+        public Guid ChangeId { get; set; }
         public string Name { get; set; } = "";
         public ICollection<EncounterItem> Items { get; set; } = new List<EncounterItem>();
     }

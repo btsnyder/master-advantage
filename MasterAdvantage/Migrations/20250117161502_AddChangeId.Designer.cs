@@ -3,6 +3,7 @@ using System;
 using MasterAdvantage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterAdvantage.Migrations
 {
     [DbContext(typeof(MasterAdvantageContext))]
-    partial class MasterAdvantageContextModelSnapshot : ModelSnapshot
+    [Migration("20250117161502_AddChangeId")]
+    partial class AddChangeId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -69,16 +72,10 @@ namespace MasterAdvantage.Migrations
                     b.Property<Guid?>("CreatureId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("CurrentGritPoints")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("CurrentHP")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CurrentMana")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CurrentRestPoints")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CurrentStamina")
@@ -91,9 +88,6 @@ namespace MasterAdvantage.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Initiative")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TempHP")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -438,12 +432,6 @@ namespace MasterAdvantage.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DeathThreshold")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("GritPoints")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("HistoryMastery")
                         .HasColumnType("INTEGER");
 
@@ -481,9 +469,6 @@ namespace MasterAdvantage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ReligionMastery")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RestPoints")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("StealthMastery")

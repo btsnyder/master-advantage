@@ -1,0 +1,15 @@
+<div class="d-flex gap-2">
+    <MudProgressLinear Class="my-auto mx-auto" Color="@Color" Rounded="true" Size="Size.Large" Value="@Value" Max="@Max" />
+    <div class="mx-auto">
+        <MudText Align="Align.Center" Typo="Typo.body2">@Value</MudText>
+        <MudDivider Style="border-color: white;"/>
+        <MudText Align="Align.Center" Typo="Typo.body2">@Max</MudText>
+    </div>
+</div>
+
+@code
+{
+    [Parameter] public int Value { get; set; }
+    [Parameter] public int Max { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+}

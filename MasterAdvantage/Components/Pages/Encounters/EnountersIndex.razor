@@ -47,7 +47,6 @@
     </MudTable>
     <div class="d-flex flex-wrap">
         <MudSwitch @bind-Value="gmView" Color="Color.Info" Class="my-auto">GM View</MudSwitch>
-        <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto">Auto Load</MudSwitch>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="my-auto" @onclick="SaveEncounter">
             Save
         </MudButton>
@@ -108,7 +107,6 @@
             </table>
         </div>
     </div>
-    <MudSwitch @bind-Value="autoLoad" Color="Color.Info" Class="my-auto mb-5">Auto Load</MudSwitch>
     <MudOverlay @bind-Visible="creatureOverlayVisible" DarkBackground>
         <MudPaper>
             <MobileCreatureEditCard Item="editItem" CardClosed="CardClosed"/>
@@ -124,10 +122,10 @@
     private bool spellOverlayVisible = false;
     private bool editInitative;
     private bool gmView;
-    private bool autoLoad;
     private string creatureSearch = "";
     private EncounterItem? editItem;
     private Encounter encounter = new();
+    private Guid currentChange = Guid.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -145,19 +143,24 @@
     {
         InvokeAsync(async () =>
         {
-            if (autoLoad)
-                await RefreshEncounter();
+            await RefreshEncounter();
         });
     }
 
     private async Task SaveEncounter()
     {
+        encounter.ChangeId = Guid.NewGuid();
+        currentChange = encounter.ChangeId;
         await db.UpdateEncounterAsync(encounter);
         Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
     }
 
     private async Task RefreshEncounter()
     {
+        if (encounter.ChangeId != Guid.Empty)
+        {
+            if (encounter.ChangeId == currentChange) return;
+        }
         if (encounter.Id == Guid.Empty)
             encounter = db.GetEncounters().First();
         else
@@ -222,6 +225,9 @@
         if (editItem != null)
         {
             await db.UpdateEncounterItem(editItem);
+            encounter.ChangeId = Guid.NewGuid();
+            currentChange = encounter.ChangeId;
+            await db.UpdateEncounterAsync(encounter);
             Snackbar.Add("Save Succeeded", Severity.Success, config => { config.VisibleStateDuration = 1000; });
         }
         creatureOverlayVisible = false;

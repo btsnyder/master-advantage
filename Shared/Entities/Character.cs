@@ -49,6 +49,9 @@
         public string CustomKnowledge2Name { get; set; } = "";
         public int CustomKnowledge2Mastery { get; set; }
         public int CustomKnowledge2 => Intelligence + CustomKnowledge2Mastery * 2;
+        public int DeathThreshold { get; set; } = 0;
+        public int RestPoints { get; set; } = 0;
+        public int GritPoints { get; set; } = 0;
         public List<Trade> Trades { get; set; }
 
         public int SkillMasteryLimit => (Level / 5) + 1;

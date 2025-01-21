@@ -3,6 +3,7 @@ using System;
 using MasterAdvantage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterAdvantage.Migrations
 {
     [DbContext(typeof(MasterAdvantageContext))]
-    partial class MasterAdvantageContextModelSnapshot : ModelSnapshot
+    [Migration("20250117165652_AddProps")]
+    partial class AddProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -91,9 +94,6 @@ namespace MasterAdvantage.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Initiative")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TempHP")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

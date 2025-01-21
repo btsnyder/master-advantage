@@ -27,7 +27,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddDbContext<MasterAdvantageContext>(options =>
-    options.UseSqlite("Data Source=masteradvantage.db").EnableSensitiveDataLogging());
+    options.UseSqlite("Data Source=masteradvantage.db"));
 
 builder.Services.AddScoped<DBService>();
 
