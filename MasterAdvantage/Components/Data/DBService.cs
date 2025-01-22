@@ -117,11 +117,9 @@ namespace MasterAdvantage.Data
             return encounter;
         }
 
-        public async Task<Guid> GetEncounterChangeId(Guid encounterId)
+        public Guid GetEncounterChangeId(Guid encounterId)
         {
-            Encounter encounter = dbContext.Encounters.Where(e => e.Id == encounterId).Single();
-            await dbContext.Entry(encounter).ReloadAsync();
-            return encounter.ChangeId;
+            return dbContext.Encounters.Where(e => e.Id == encounterId).Select(e => e.ChangeId).Single();
         }
 
         public async Task<Creature> UpdateCreature(Creature creature)

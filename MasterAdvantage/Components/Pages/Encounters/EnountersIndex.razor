@@ -89,18 +89,18 @@
                     @foreach(EncounterItem item in encounter.Items.OrderByDescending(i => i.Initiative).Where(i => !i.Hidden))
                     {
                         <tr class="mud-table-row cursor-pointer" @onclick="() => ViewPersonClicked(item)">
-                            <th class="mud-table-cell">@item.Initiative</th>
-                            <th class="mud-table-cell">
+                            <td class="mud-table-cell">@item.Initiative</td>
+                            <td class="mud-table-cell">
                                 <div class="d-flex gap-4">
                                     <MudAvatar>
                                         <MudImage Src="@("images/" + item.Creature.ImageSrc)" />
                                     </MudAvatar>
                                     <MudText Class="my-auto">@item.Creature.Name</MudText>
                                 </div>
-                            </th>
-                            <th class="mud-table-cell">
+                            </td>
+                            <td class="mud-table-cell">
                                 <HealthEdit Item="item" GMView="false" TextSize="textSize" />
-                            </th>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -165,6 +165,7 @@
             encounter = db.GetEncounters().First();
         else
             encounter = await db.GetEncounter(encounter.Id);
+        currentChange = encounter.ChangeId;
         StateHasChanged(); 
     }
 

@@ -1,3 +1,5 @@
+@inject DBService db
+
 <MudCard Style="height: 70vh; width: 80vw"> 
     <MudCardHeader>
         <CardHeaderAvatar>
@@ -13,7 +15,7 @@
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent Class="d-flex overflow-scroll gap-4 flex-column">
-        <MudTabs ApplyEffectsToContainer="true" MinimumTabWidth="40px">
+        <MudTabs ApplyEffectsToContainer="true" MinimumTabWidth="40px" ActiveTabClass="mud-theme-primary">
             <MudTabPanel Text="Basics">
                 <div class="mud-table">
                     <div class="mud-table-container">
@@ -236,6 +238,60 @@
                     }
                 </MudStack>
             </MudTabPanel>
+            <MudTabPanel Text="Skills">
+                @if (!Item.IsNPC)
+                {
+                    <MudTextField @bind-Value="skillSearch" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" 
+                        Variant="Variant.Outlined" Class="mt-2" DebounceInterval="500"/>
+                    @foreach (var name in new string[] { "Prime", "Might", "Agility", "Charisma", "Intelligence" })
+                    {
+                        @if (name.ToLower().Contains(skillSearch.ToLower()))
+                        {
+                            <div class="d-flex my-2">
+                                <MudText Typo="Typo.h6">@name</MudText>
+                                <MudPaper Class="mx-4 px-4 d-flex" Outlined="true">
+                                    <MudText Typo="Typo.h6" Class="my-auto">@(Helpers.GetPropertyByName<int>(Item.Character!, name))</MudText>
+                                </MudPaper>
+                            </div>
+                            <MudDivider />
+                        }
+                        @foreach (var skill in Item.Character!.AttributeSkills[name])
+                        {
+                            @if (skill.ToLower().Contains(skillSearch.ToLower()))
+                            {
+                                <Skill Character="@Item.Character" Name="@skill" Size="Size.Small" Typo="Typo.body1" Editable=false/>
+                            }
+                        }
+                    }
+                }
+            </MudTabPanel>
+            <MudTabPanel Text="Spells">
+                <MudTextField @bind-Value="spellSearch" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" 
+                        Variant="Variant.Outlined" Class="mt-2" DebounceInterval="500"/>
+                <div class="mud-table-container">
+                    <table class="mud-table-root">
+                        <colgroup>
+                            <col />
+                            <col style="width:30%"/>
+                        </colgroup>
+                        <thead class="mud-table-head">
+                            <tr class="mud-table-row">
+                                <th class="mud-table-cell">Name</th>
+                                <th class="mud-table-cell">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mud-table-body">
+                            @foreach(Spell spell in Item.Creature.Spells.OrderBy(s => s.Name).Where(s => s.Name.ToLower().Contains(spellSearch.ToLower())))
+                            {
+                                <tr class="mud-table-row cursor-pointer" @onclick="() => SpellClicked(spell)">
+                                    <td class="mud-table-cell">@spell.Name</td>
+                                    <td class="mud-table-cell">@spell.GetCost()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </MudTabPanel>
         </MudTabs>
     </MudCardContent>
 </MudCard>
@@ -243,7 +299,9 @@
 @code {
     [Parameter] public EncounterItem Item { get; set; }
     [Parameter] public EventCallback CardClosed { get; set; }
-    bool equipped { get; set; }
+    private bool equipped { get; set; }
+    private string skillSearch { get; set; } = "";
+    private string spellSearch { get; set; } = "";
     
     private void Increment(string property, bool increase, int max, int min = 0)
     {
@@ -256,5 +314,10 @@
         {
             Helpers.SetProperty<int>(Item, $"Current{property}", --current);
         }
+    }
+
+    private void SpellClicked(Spell spell)
+    {
+
     }
 }
