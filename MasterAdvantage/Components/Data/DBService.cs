@@ -306,7 +306,7 @@ namespace MasterAdvantage.Data
         public async Task DeleteSpell(Spell spell)
         {
             try
-            {
+            { 
                 dbContext.Spells.Remove(spell);
                 await dbContext.SaveChangesAsync();
             }
@@ -314,6 +314,18 @@ namespace MasterAdvantage.Data
             {
                 throw;
             }
+        }
+
+        public async Task<List<CombatAction>> GetActions()
+        {
+            return await dbContext.Actions.OrderBy(a => a.Name).ToListAsync();
+        }
+
+        public async Task<CombatAction> UpdateAction(CombatAction action)
+        {
+            dbContext.Actions.Update(action);
+            await dbContext.SaveChangesAsync();
+            return action;
         }
         #endregion
     }

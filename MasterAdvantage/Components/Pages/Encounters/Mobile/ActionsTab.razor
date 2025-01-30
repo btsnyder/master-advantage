@@ -1,0 +1,95 @@
+@inject DBService db
+
+<div class="d-flex gap-2">
+    <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" 
+            Variant="Variant.Outlined" Class="mt-2" DebounceInterval="500"/>
+    @if (editAction == null)
+    {
+        <MudFab Class="my-auto" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Color="Color.Success" OnClick="() => editAction = new()"/>
+    } else {
+        <MudToggleIconButton @bind-Toggled="showEdit" Class="my-auto" ToggledColor="Color.Info" Icon="@Icons.Material.Filled.Edit" />
+        <MudFab Class="my-auto" StartIcon="@Icons.Material.Filled.Clear" Size="Size.Small" Color="Color.Error" OnClick="() => editAction = null"/>
+    }
+</div>
+@if (editAction != null)
+{
+    <div>
+        <MudTextField T="string" @bind-Text="editAction.Name" Label="Name" Variant="Variant.Outlined" />
+        <MudTextField T="string" @bind-Text="editAction.Cost" Label="Cost" Variant="Variant.Outlined"/>
+        <MudSelect Label="Damage Type" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" @bind-Value=editAction.Category>
+        @foreach (var actionCategory in (ActionCategory[])Enum.GetValues(typeof(ActionCategory)))
+        {
+            <MudSelectItem Value="actionCategory" Disabled="@(actionCategory == editAction.Category)">@actionCategory</MudSelectItem>
+        }
+    </MudSelect>
+        <MudTextField T="string" @bind-Text="editAction.Description" Label="Description" Variant="Variant.Outlined" Lines="4"/>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" FullWidth OnClick="SaveAction">Save</MudButton>
+    </div>
+}
+<MudExpansionPanels class="my-2" MultiExpansion>
+@foreach (var actionCategory in (ActionCategory[])Enum.GetValues(typeof(ActionCategory)))
+{
+    <MudExpansionPanel Text="@actionCategory.ToString()" style="background-color: #2E2D2D;" Expanded="!string.IsNullOrEmpty(search)">
+        @foreach(CombatAction action in actions.Where(s => s.Name.ToLower().Contains(search.ToLower())).Where(a => a.Category == actionCategory))
+        {
+            <MudButton FullWidth class="justify-space-between py-4" DropShadow=false Variant="@(selectedAction == action ? Variant.Outlined : Variant.Text)" 
+                OnClick=@(() => ActionSelected(action))>
+                <div class="d-flex flex-column flex-grow-1 gap-2">
+                    <div class="d-flex justify-space-between">
+                        <MudText><strong>@action.Name</strong></MudText>
+                        <MudText><strong>@action.Cost</strong></MudText>
+                    </div>
+                    @if (action == selectedAction)
+                    {
+                        <MudText Typo="Typo.body2">@(new MarkupString(action.Description))</MudText>
+                        @if (showEdit)
+                        {
+                            <MudButton FullWidth Color="Color.Info" Variant="Variant.Filled" OnClick="() => ActionEdited(action)">Edit</MudButton>
+                        }
+                    }
+                </div>
+            </MudButton>
+            <MudDivider Style="border-color: #B2B0BF;"/>
+        }
+    </MudExpansionPanel>
+}
+</MudExpansionPanels>
+
+@code {
+    private string search { get; set; } = "";
+    private CombatAction? editAction = null;
+    private CombatAction? selectedAction = null;
+    private bool showEdit;
+    private List<CombatAction> actions = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            actions = await db.GetActions();
+        }
+    }
+    
+    private async Task SaveAction()
+    {
+        await db.UpdateAction(editAction!);
+        editAction = null;
+        actions = await db.GetActions();
+    }
+
+    private void ActionSelected(CombatAction action)
+    {
+        if (selectedAction == null || selectedAction != action)
+        {
+            selectedAction = action;
+        } else {
+            selectedAction = null;
+        } 
+    }
+
+    private void ActionEdited(CombatAction action)
+    {
+        editAction = action;
+        selectedAction = null;
+    }
+}

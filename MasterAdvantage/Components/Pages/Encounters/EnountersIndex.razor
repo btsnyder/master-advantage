@@ -3,6 +3,7 @@
 @inject ISnackbar Snackbar
 @implements IDisposable
 @using System.Timers;
+@using MasterAdvantage.Components.Pages.Encounters.Mobile;
 
 <MudHidden Breakpoint="Breakpoint.SmAndDown">
     <MudTable T="EncounterItem" Items="encounter.Items.Where(i => gmView || !i.Hidden).OrderByDescending(i => i.Initiative)" Class="mb-4" RowClassFunc="@((encounter, index) => encounter.RowClass)">

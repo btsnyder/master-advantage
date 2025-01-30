@@ -1,0 +1,166 @@
+<div class="mud-table">
+    <div class="mud-table-container">
+        <table class="mud-table-root">
+            <colgroup>
+                <col style="width:50px"/>
+                <col />
+                <col style="width:50px"/>
+            </colgroup>
+            <tbody class="mud-table-body">
+                <tr class="mud-table-row">
+                    <td colspan="3">
+                        <MudText Align="Align.Center">HP</MudText>
+                    </td>
+                </tr>
+                <tr class="mud-table-row">
+                    <td>
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Increment("HP", false, Item.Creature.MaxHP, Item.Character?.DeathThreshold ?? 0))"/>
+                    </td>
+                    <td>
+                        <HealthEdit Item="Item" GMView="false" TextSize="Typo.h6" />
+                    </td>
+                    <td class="d-flex justify-end">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => Increment("HP", true, Item.Creature.MaxHP))"/>
+                    </td>
+                </tr>
+                <tr class="mud-table-row">
+                    <td colspan="3">
+                        <MudDivider Class="my-2"/>
+                    </td>
+                </tr>
+                <tr class="mud-table-row">
+                    <td colspan="3">
+                        <MudText Align="Align.Center">Temp HP</MudText>
+                    </td>
+                </tr>
+                <tr class="mud-table-row">
+                    <td>
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Item.TempHP--)"/>
+                    </td>
+                    <td>
+                        <MudText Align="Align.Center" Typo="Typo.h4">@Item.TempHP</MudText>
+                    </td>
+                    <td class="d-flex justify-end">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => Item.TempHP++)"/>
+                    </td>
+                </tr>
+                <tr class="mud-table-row">
+                    <td colspan="3">
+                        <MudDivider Class="my-2"/>
+                    </td>
+                </tr>
+                @if(Item.Character!.MaxMana > 0)
+                {
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudText Align="Align.Center">Mana</MudText>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td>
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Increment("Mana", false, Item.Creature.MaxMana))"/>
+                        </td>
+                        <td>
+                            <PointBar Value="@Item.CurrentMana" Max="@Item.Character.MaxMana" Color="Color.Info"/>
+                        </td>
+                        <td class="d-flex justify-end">
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => Increment("Mana", true, Item.Creature.MaxMana))"/>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudDivider Class="my-2"/>
+                        </td>
+                    </tr>
+                }
+                @if(Item.Character!.MaxStamina > 0)
+                {
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudText Align="Align.Center">Stamina</MudText>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td>
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Increment("Stamina", false, Item.Creature.MaxStamina))"/>
+                        </td>
+                        <td>
+                            <MudText Align="Align.Center" Typo="Typo.h4">@($"{Item.CurrentStamina} / {Item.Creature.MaxStamina}")</MudText>
+                        </td>
+                        <td class="d-flex justify-end">
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => Increment("Stamina", true, Item.Creature.MaxStamina))"/>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudDivider Class="my-2"/>
+                        </td>
+                    </tr>
+                }
+                @if (!Item.IsNPC)
+                {
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudText Align="Align.Center">Rest Points</MudText>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td>
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Increment("RestPoints", false, Item.Character.Level + Item.Character.Might))"/>
+                        </td>
+                        <td>
+                            <PointBar Value="@Item.CurrentRestPoints" Max="@(Item.Character.Level + Item.Character.Might)" Color="Color.Warning"/>
+                        </td>
+                        <td class="d-flex justify-end">
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => Increment("RestPoints", true, Item.Character.Level + Item.Character.Might))"/>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudDivider Class="my-2"/>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudText Align="Align.Center">Grit Points</MudText>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td>
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => Increment("GritPoints", false, Item.Character.Charisma + 2))"/>
+                        </td>
+                        <td>
+                            <PointBar Value="@Item.CurrentGritPoints" Max="@(Item.Character.Charisma + 2)" />
+                        </td>
+                        <td class="d-flex justify-end">
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => Increment("GritPoints", true, Item.Character.Charisma + 2))"/>
+                        </td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td colspan="3">
+                            <MudDivider Class="my-2"/>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EncounterItem Item { get; set; }
+
+    
+    private void Increment(string property, bool increase, int max, int min = 0)
+    {
+        int current = Helpers.GetPropertyByName<int>(Item, $"Current{property}");
+        if (increase && current < max)
+        {
+            Helpers.SetProperty<int>(Item, $"Current{property}", ++current);
+        } 
+        else if (!increase && current > min)
+        {
+            Helpers.SetProperty<int>(Item, $"Current{property}", --current);
+        }
+    }
+}

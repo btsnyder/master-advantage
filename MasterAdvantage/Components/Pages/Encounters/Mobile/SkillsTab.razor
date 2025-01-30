@@ -1,0 +1,31 @@
+ @if (!Item.IsNPC)
+{
+    <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" 
+        Variant="Variant.Outlined" Class="mt-2" DebounceInterval="500"/>
+    @foreach (var name in new string[] { "Prime", "Might", "Agility", "Charisma", "Intelligence" })
+    {
+        @if (name.ToLower().Contains(search.ToLower()))
+        {
+            <div class="d-flex my-2">
+                <MudText Typo="Typo.h6">@name</MudText>
+                <MudPaper Class="mx-4 px-4 d-flex" Outlined="true">
+                    <MudText Typo="Typo.h6" Class="my-auto">@(Helpers.GetPropertyByName<int>(Item.Character!, name))</MudText>
+                </MudPaper>
+            </div>
+            <MudDivider />
+        }
+        @foreach (var skill in Item.Character!.AttributeSkills[name])
+        {
+            @if (skill.ToLower().Contains(search.ToLower()))
+            {
+                <Skill Character="@Item.Character" Name="@skill" Size="Size.Small" Typo="Typo.body1" Editable=false/>
+            }
+        }
+    }
+}
+
+@code {
+    private string search { get; set; } = "";
+
+    [Parameter] public EncounterItem Item { get; set; }
+}

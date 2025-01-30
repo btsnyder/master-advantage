@@ -40,14 +40,14 @@
             @if (focusedSpell == context)
             {
                 <td colspan="7">
-                    <div class="ms-2"><MudMarkdown Value="@context.Description" /></div>
+                    <div class="ms-2"><MudText>@Helpers.GetMarkdown(context.Description)</MudText></div>
                     @if (context.Enhancements.Count > 0)
                     {
                         <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
                         <MudDivider />
                         @foreach (var enhancement in context.Enhancements)
                         {
-                            <div class="ma-2"><MudMarkdown Value="@string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description)" /></div>
+                            <div class="ma-2"><MudText>@Helpers.GetMarkdown(string.Format(" <b><i>{0}:</b></i> ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText></div>
                         }
                     }
                 </td>
@@ -96,14 +96,14 @@
                         {
                             <tr>
                                 <td colspan="7">
-                                    <div class="ms-2"><MudMarkdown Value="@spell.Description" /></div>
+                                    <div class="ms-2"><MudText>@Helpers.GetMarkdown(spell.Description)</MudText></div>
                                     @if (spell.Enhancements.Count > 0)
                                     {
                                         <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
                                         <MudDivider />
                                         @foreach (var enhancement in spell.Enhancements)
                                         {
-                                            <div class="ma-2"><MudMarkdown Value="@string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description)" /></div>
+                                            <div class="ma-2"><MudText>@Helpers.GetMarkdown(string.Format(" <b><i>{0}:</b></i> ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText></div>
                                         }
                                     }
                                 </td>
