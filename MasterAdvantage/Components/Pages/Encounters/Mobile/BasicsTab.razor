@@ -148,7 +148,7 @@
 </div>
 
 @code {
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
 
     
     private void Increment(string property, bool increase, int max, int min = 0)

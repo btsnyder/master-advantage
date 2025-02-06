@@ -37,7 +37,7 @@
 </div>
 
 @code {
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
 
     public void ValueChanged(string name, bool increased)
     {

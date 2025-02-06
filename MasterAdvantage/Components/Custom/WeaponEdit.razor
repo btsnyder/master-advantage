@@ -80,7 +80,7 @@
                         <MudSelectItem Value="prop">
                             <div class="d-flex">
                                 <MudText>@prop.Name</MudText>
-                                @if (selectedWeapon.WeaponProperties.Contains(prop))
+                                @if (selectedWeapon.WeaponProperties!.Contains(prop))
                                 {
                                     <MudSpacer />
                                     <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" />
@@ -97,7 +97,7 @@
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => editWeaponProperty = null" Class="my-auto" Variant="Variant.Filled" Color="Color.Error" />
                 }
-                <MudIconButton Icon="@Icons.Material.Filled.Add" Disabled="@selectedWeapon.WeaponProperties.Contains(selectedWeaponProperty)" OnClick="() => selectedWeapon.WeaponProperties.Add(selectedWeaponProperty)" Class="my-auto" Variant="Variant.Filled" Color="Color.Success" />
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Disabled="@(selectedWeaponProperty != null && selectedWeapon.WeaponProperties?.Contains(selectedWeaponProperty) == true)" OnClick="() => selectedWeapon.WeaponProperties!.Add(selectedWeaponProperty!)" Class="my-auto" Variant="Variant.Filled" Color="Color.Success" />
             </div>
             @if (editWeaponProperty != null)
             {
@@ -121,8 +121,8 @@
     private WeaponStyle? selectedWeaponStyle { get; set; }
     private WeaponProperty? selectedWeaponProperty { get; set; }
     private WeaponProperty? editWeaponProperty { get; set; }
-    private List<WeaponStyle> weaponStyles { get; set; }
-    private List<WeaponProperty> weaponProperties { get; set; }
+    private List<WeaponStyle> weaponStyles { get; set; } = [];
+    private List<WeaponProperty> weaponProperties { get; set; } = [];
     [Parameter] public EventCallback CardClosed { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -145,7 +145,7 @@
     private async Task AddWeaponStyle()
     {
         selectedWeapon!.Style = selectedWeaponStyle!;
-        await db.UpdateWeaponStyleAsync(selectedWeaponStyle!);
+        await db.UpdateAsync(selectedWeaponStyle!);
         weaponStyles = await db.GetWeaponStylesAsync();
         selectedWeaponStyle = null;
     }
@@ -153,7 +153,7 @@
     private async Task AddWeaponProperty()
     {
         selectedWeapon!.WeaponProperties.Add(editWeaponProperty!);
-        await db.UpdateWeaponPropertyAsync(editWeaponProperty!);
+        await db.UpdateAsync(editWeaponProperty!);
         weaponProperties = await db.GetWeaponPropertiesAsync();
         selectedWeaponProperty = null;
         editWeaponProperty = null;
@@ -161,7 +161,7 @@
 
     private async Task SaveWeapon()
     {
-        await db.UpdateWeapon(selectedWeapon);
+        await db.UpdateAsync(selectedWeapon!);
         selectedWeapon = null;
     }
 }

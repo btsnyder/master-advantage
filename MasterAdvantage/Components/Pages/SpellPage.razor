@@ -121,7 +121,7 @@
     private bool spellEditOpen { get; set; }
     private Spell? selectedSpell { get; set; }
     private Spell? focusedSpell { get; set; }
-    private string search { get; set; }
+    private string search { get; set; } = "";
     private IEnumerable<Spell> Spells = new List<Spell>();
 
     protected override async Task OnInitializedAsync()
@@ -164,7 +164,7 @@
     private async Task NewSpellClicked()
     {
         selectedSpell = new();
-        selectedSpell = await db.UpdateSpell(selectedSpell);
+        selectedSpell = await db.UpdateAsync(selectedSpell);
         spellEditOpen = true;
     }
 

@@ -29,9 +29,11 @@
         public string Reactions { get; set; } = "";
         public int Attack { get; set; }
         public int SaveDC { get; set; }
+        public int Currency { get; set; }
 
         public List<Weapon> Weapons { get; set; } = new();
         public List<Spell> Spells { get; set; } = new();
         public List<Maneuver> Maneuvers { get; set; } = new();
+        public List<InventoryItem> Items { get; set; } = new();
     }
 }

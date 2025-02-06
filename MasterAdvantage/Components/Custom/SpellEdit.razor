@@ -87,13 +87,13 @@
             SelectedSpell!.Enhancements.Add(editEnhancement!);
             editEnhancement!.SpellId = SelectedSpell.Id;
         }
-        await db.UpdateSpellEnhancement(editEnhancement!);
+        await db.UpdateAsync(editEnhancement!);
         editEnhancement = null;
     }
 
     private async Task SaveSpell()
     {
-        await db.UpdateSpell(SelectedSpell!);
+        await db.UpdateAsync(SelectedSpell!);
         SelectedSpell = null;
         if (CloseAfterSave)
         {
@@ -110,6 +110,6 @@
     private async Task CreateSpell()
     {
         SelectedSpell = new();
-        SelectedSpell = await db.UpdateSpell(SelectedSpell);
+        SelectedSpell = await db.UpdateAsync(SelectedSpell);
     }
 }

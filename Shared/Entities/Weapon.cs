@@ -12,10 +12,10 @@ namespace MasterAdvantage.Shared.Entities
         public bool Melee { get; set; }
         public WeaponType Type { get; set; }
         public string Range { get; set; } = "";
-        public WeaponStyle Style { get; set; }
-        public List<WeaponProperty> WeaponProperties { get; set; } = new();
+        public WeaponStyle Style { get; set; } = new();
+        public List<WeaponProperty> WeaponProperties { get; set; } = [];
 
-        public List<Creature> Creatures { get; set; }
+        public List<Creature> Creatures { get; set; } = [];
 
         public override string ToString()
         {

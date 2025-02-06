@@ -64,7 +64,7 @@
     private Spell? selectedSpell { get; set; }
 
     [Parameter] public EventCallback SpellsOpened { get; set; }
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
 
     private async Task<IEnumerable<Spell>> SpellSearch(string value, CancellationToken token)
     {

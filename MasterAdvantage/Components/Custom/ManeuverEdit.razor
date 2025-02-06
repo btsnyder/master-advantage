@@ -88,13 +88,13 @@
             SelectedManeuver!.Enhancements.Add(editEnhancement!);
             editEnhancement!.ManeuverId = SelectedManeuver.Id;
         }
-        await db.UpdateManeuverEnhancement(editEnhancement!);
+        await db.UpdateAsync(editEnhancement!);
         editEnhancement = null;
     }
 
     private async Task SaveManeuver()
     {
-        await db.UpdateManeuver(SelectedManeuver!);
+        await db.UpdateAsync(SelectedManeuver!);
         SelectedManeuver = null;
         if (CloseAfterSave)
         {
@@ -111,6 +111,6 @@
     private async Task CreateManeuver()
     {
         SelectedManeuver = new();
-        SelectedManeuver = await db.UpdateManeuver(SelectedManeuver);
+        SelectedManeuver = await db.UpdateAsync(SelectedManeuver);
     }
 }

@@ -3,7 +3,7 @@
 
 @code {
     [Parameter] public int Value { get; set; }
-    [Parameter] public string Name { get; set; }
-    [Parameter] public Character Character { get; set; }
+    [Parameter] public string Name { get; set; } = "";
+    [Parameter] public Character Character { get; set; } = new();
     [Parameter] public EventCallback<MouseEventArgs> Clicked { get; set;}
 }

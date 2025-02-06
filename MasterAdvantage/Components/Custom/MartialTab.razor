@@ -50,7 +50,7 @@
     private Weapon? selectedWeapon { get; set; }
 
     [Parameter] public EventCallback WeaponsOpened { get; set; }
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
 
     private async Task<IEnumerable<Weapon>> WeaponSearch(string value, CancellationToken token)
     {

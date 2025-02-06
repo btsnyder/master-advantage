@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Spell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Maneuver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\ManeuverEnhancement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\InventoryItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Trade.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Weapon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\WeaponProperty.cs" />

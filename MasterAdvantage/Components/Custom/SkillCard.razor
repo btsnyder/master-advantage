@@ -38,12 +38,15 @@
 
 @code {
     private Character? character => Creature?.GetType() == typeof(Character) ? (Character)Creature : null;
-    [Parameter] public Creature Creature { get; set; }
-    [Parameter] public string Attribute { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter] public Creature Creature { get; set; } = new();
+    [Parameter] public string Attribute { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
 
     int GetSave()
     {
+        if (character == null) {
+            return 0;
+        }
         int attribute = Helpers.GetPropertyByName<int>(character, Attribute);
         bool save = Helpers.GetPropertyByName<bool>(character, Attribute + "Save");
 
@@ -62,6 +65,9 @@
 
     void SaveClicked()
     {
+        if (character == null) {
+            return;
+        }
         bool current = Helpers.GetPropertyByName<bool>(character, Attribute + "Save");
         Helpers.SetProperty<bool>(character, Attribute + "Save", !current);
     }

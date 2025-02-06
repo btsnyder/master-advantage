@@ -72,7 +72,7 @@
     
     private async Task SaveAction()
     {
-        await db.UpdateAction(editAction!);
+        await db.UpdateAsync(editAction!);
         editAction = null;
         actions = await db.GetActions();
     }

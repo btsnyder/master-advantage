@@ -27,6 +27,7 @@ namespace MasterAdvantage.Data
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.Style)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Spells).ThenInclude(s => s.Enhancements)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Maneuvers).ThenInclude(t => t.Enhancements)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Items)
                 .First(e => e.Id == id);
             foreach (var i in encounter.Items)
             {
@@ -44,50 +45,15 @@ namespace MasterAdvantage.Data
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.Style)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Spells).ThenInclude(s => s.Enhancements)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Maneuvers).ThenInclude(t => t.Enhancements)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Items)
                 .ToList();
         }
 
-        public async Task<Encounter> AddEncounterAsync(Encounter encounter)
+        public async Task<T> UpdateAsync<T>(T entity) where T : class
         {
-            try
-            {
-                dbContext.Encounters?.Add(encounter);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return encounter;
-        }
-
-        public async Task<EncounterItem> AddEncounterItem(EncounterItem item)
-        {
-            try
-            {
-                dbContext.EncounterItems?.Add(item);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return item;
-        }
-
-        public async Task<Creature> AddCreature(Creature creature)
-        {
-            try
-            {
-                dbContext.Creatures?.Add(creature);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return creature;
-
+            EntityEntry<T> saved = dbContext.Set<T>().Update(entity);
+            await dbContext.SaveChangesAsync();
+            return saved.Entity;
         }
 
         public async Task<Encounter> UpdateEncounterAsync(Encounter encounter)
@@ -201,34 +167,6 @@ namespace MasterAdvantage.Data
             return await dbContext.Weapons.Where(w => w.Name.ToLower().Contains(name.ToLower())).OrderBy(w => w.Name).ToListAsync();
         }
 
-        public async Task<WeaponStyle> UpdateWeaponStyleAsync(WeaponStyle style)
-        {
-            try
-            {
-                dbContext.WeaponStyles.Update(style);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return style;
-        }
-
-        public async Task<WeaponProperty> UpdateWeaponPropertyAsync(WeaponProperty prop)
-        {
-            try
-            {
-                dbContext.WeaponProperties.Update(prop);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return prop;
-        }
-
         public async Task<List<WeaponStyle>> GetWeaponStylesAsync()
         {
             return await dbContext.WeaponStyles.ToListAsync();
@@ -237,20 +175,6 @@ namespace MasterAdvantage.Data
         public async Task<List<WeaponProperty>> GetWeaponPropertiesAsync()
         {
             return await dbContext.WeaponProperties.ToListAsync();
-        }
-
-        public async Task<Weapon> UpdateWeapon(Weapon weapon)
-        {
-            try
-            {
-                dbContext.Weapons.Update(weapon);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return weapon;
         }
 
         public async Task<List<Spell>> GetSpellsAsync()
@@ -276,35 +200,6 @@ namespace MasterAdvantage.Data
             }
         }
 
-        public async Task<SpellEnhancement> UpdateSpellEnhancement(SpellEnhancement enhancement)
-        {
-            try
-            {
-                dbContext.SpellEnhancements.Update(enhancement);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return enhancement;
-        }
-
-        public async Task<Spell> UpdateSpell(Spell spell)
-        {
-            EntityEntry<Spell> entitySpell;
-            try
-            {
-                entitySpell = dbContext.Spells.Update(spell);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return entitySpell.Entity;
-        }
-
         public async Task DeleteSpell(Spell spell)
         {
             try
@@ -321,13 +216,6 @@ namespace MasterAdvantage.Data
         public async Task<List<CombatAction>> GetActions()
         {
             return await dbContext.Actions.OrderBy(a => a.Name).ToListAsync();
-        }
-
-        public async Task<CombatAction> UpdateAction(CombatAction action)
-        {
-            dbContext.Actions.Update(action);
-            await dbContext.SaveChangesAsync();
-            return action;
         }
 
         public async Task<List<Maneuver>> GetManeuversAsync()
@@ -351,35 +239,6 @@ namespace MasterAdvantage.Data
             {
                 throw;
             }
-        }
-
-        public async Task<ManeuverEnhancement> UpdateManeuverEnhancement(ManeuverEnhancement enhancement)
-        {
-            try
-            {
-                dbContext.ManeuverEnhancements.Update(enhancement);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return enhancement;
-        }
-
-        public async Task<Maneuver> UpdateManeuver(Maneuver maneuver)
-        {
-            EntityEntry<Maneuver> entityManeuver;
-            try
-            {
-                entityManeuver = dbContext.Maneuvers.Update(maneuver);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return entityManeuver.Entity;
         }
 
         public async Task DeleteManeuver(Maneuver maneuver)

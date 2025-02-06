@@ -47,7 +47,7 @@
     private Maneuver? focusedManeuver { get; set; }
     private Maneuver? selectedManeuver { get; set; }
 
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
 
     private async Task<IEnumerable<Maneuver>> ManeuverSearch(string value, CancellationToken token)
     {

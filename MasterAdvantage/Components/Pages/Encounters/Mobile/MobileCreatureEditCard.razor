@@ -47,7 +47,7 @@
 </MudCard>
 
 @code {
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
     [Parameter] public EventCallback CardClosed { get; set; }
     private bool equipped { get; set; }
     private string selectedTab { get; set; } = tabs[0];

@@ -62,7 +62,7 @@
     private bool maneuverEditOpen { get; set; }
     private Maneuver? selectedManeuver { get; set; }
     private Maneuver? focusedManeuver { get; set; }
-    private string search { get; set; }
+    private string search { get; set; } = "";
     private IEnumerable<Maneuver> Maneuvers = new List<Maneuver>();
 
     protected override async Task OnInitializedAsync()
@@ -105,7 +105,7 @@
     private async Task NewManeuverClicked()
     {
         selectedManeuver = new();
-        selectedManeuver = await db.UpdateManeuver(selectedManeuver);
+        selectedManeuver = await db.UpdateAsync(selectedManeuver);
         maneuverEditOpen = true;
     }
 

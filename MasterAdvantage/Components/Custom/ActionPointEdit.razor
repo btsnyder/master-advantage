@@ -5,7 +5,7 @@
 </div>
 
 @code {
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
     [Parameter] public EventCallback EncounterItemUpdated { get; set; }
 
     void ActionPointChanged(int value)

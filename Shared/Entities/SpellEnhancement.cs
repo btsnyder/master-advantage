@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public Guid SpellId { get; set; }
-        public Spell Spell { get; set; }
+        public Spell Spell { get; set; } = new();
         public string Name { get; set; } = "";
         public int AP { get; set; }
         public int MP { get; set; }

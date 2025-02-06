@@ -61,7 +61,7 @@
 </MudCard>
 
 @code {
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
     [Parameter] public EventCallback CardClosed { get; set;}
     [Parameter] public EventCallback WeaponsOpened { get; set; }
     [Parameter] public EventCallback SpellsOpened { get; set; }

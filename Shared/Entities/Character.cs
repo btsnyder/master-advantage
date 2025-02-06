@@ -52,7 +52,7 @@
         public int DeathThreshold { get; set; } = 0;
         public int RestPoints { get; set; } = 0;
         public int GritPoints { get; set; } = 0;
-        public List<Trade> Trades { get; set; }
+        public List<Trade> Trades { get; set; } = [];
 
         public int SkillMasteryLimit => (Level / 5) + 1;
 

@@ -67,7 +67,7 @@
 
 @code {
     private Typo textSize = Typo.h4;
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
     [Parameter] public bool EditInitative { get; set; }
     [Parameter] public bool GMView { get; set; }
     [Parameter] public EventCallback<EncounterItem> CreatureCopied { get; set; }

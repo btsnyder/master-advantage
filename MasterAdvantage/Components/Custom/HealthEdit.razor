@@ -23,7 +23,7 @@ else
 }
 
 @code {
-    [Parameter] public EncounterItem Item { get; set; }
+    [Parameter] public EncounterItem Item { get; set; } = new();
     [Parameter] public bool GMView { get; set; }
     [Parameter] public Typo TextSize { get; set; }
     [Parameter] public EventCallback EncounterItemChanged { get; set; }

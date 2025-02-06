@@ -190,10 +190,10 @@
         if (creature == null)
         {
             creature = new Creature { Name = creatureSearch };
-            await db.AddCreature(creature);
+            await db.UpdateAsync(creature);
         }
         var item = new EncounterItem { EncounterId = encounter.Id, CreatureId = creature.Id, CurrentHP = creature.MaxHP };
-        await db.AddEncounterItem(item);
+        await db.UpdateAsync(item);
         await RefreshEncounter();
     }
 

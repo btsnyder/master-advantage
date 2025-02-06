@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public Guid ManeuverId { get; set; }
-        public Maneuver Maneuver { get; set; }
+        public Maneuver Maneuver { get; set; } = new();
         public string Name { get; set; } = "";
         public int AP { get; set; }
         public int SP { get; set; }
