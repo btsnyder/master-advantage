@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\WeaponType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\DamageType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\ActionCategory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Enums\ManeuverCategory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\DropItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Encounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\EncounterItem.cs" />
@@ -20,6 +21,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Creature.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\ICreature.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Spell.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\Maneuver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\ManeuverEnhancement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Trade.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\Weapon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\WeaponProperty.cs" />

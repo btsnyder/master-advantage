@@ -37,6 +37,10 @@
         }
         @if (selectedTab == tabs[4])
         {
+            <ManeuversTab Item="Item" />
+        }
+        @if (selectedTab == tabs[5])
+        {
             <ActionsTab />
         }
     </MudCardContent>
@@ -47,5 +51,5 @@
     [Parameter] public EventCallback CardClosed { get; set; }
     private bool equipped { get; set; }
     private string selectedTab { get; set; } = tabs[0];
-    private static string[] tabs = new string[] { "Basics", "Combat", "Skills", "Spells", "Actions" };
+    private static string[] tabs = new string[] { "Basics", "Combat", "Skills", "Spells", "Maneuvers", "Actions" };
 }

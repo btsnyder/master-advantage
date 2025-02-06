@@ -1,0 +1,129 @@
+﻿@page "/maneuvers"
+@inject DBService db
+
+    <MudTable T="Maneuver" Items="Maneuvers" OnRowClick="RowClickEvent" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" Filter="new Func<Maneuver,bool>(ManeuverFilter)">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Maneuvers</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" Class="ms-4" OnClick="NewManeuverClicked">New Maneuver</MudButton>
+        </ToolBarContent>
+        <ColGroup>
+            <col />
+            <col />
+            <col />
+            <col style="width: 50px" />
+            <col style="width: 50px" />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Cost</MudTh>
+            <MudTh>Category</MudTh>
+            <MudTh />
+            <MudTh />
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Cost">@context.GetCost()</MudTd>
+            <MudTd DataLabel="Category">@context.Category</MudTd>
+            <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => ManeuverEditClicked(context)" /></MudTd>
+            <MudTd Class="pa-0"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => ManeuverDeleteClicked(context)" /></MudTd>
+        </RowTemplate>
+        <ChildRowContent>
+            @if (focusedManeuver == context)
+            {
+                <td colspan="7">
+                    <div class="ms-2"><MudText>@Helpers.GetMarkdown(context.Description)</MudText></div>
+                    @if (context.Enhancements.Count > 0)
+                    {
+                        <MudText Typo="Typo.h6" Class="ma-2">Enhancements</MudText>
+                        <MudDivider />
+                        @foreach (var enhancement in context.Enhancements)
+                        {
+                            <div class="ma-2"><MudText>@Helpers.GetMarkdown(string.Format(" <b><i>{0}:</b></i> ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText></div>
+                        }
+                    }
+                </td>
+            }
+        </ChildRowContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    <MudOverlay @bind-Visible="maneuverEditOpen" DarkBackground>
+        <MudPaper>
+            <MudDrawer Open="true" Elevation="0" Anchor="Anchor.End" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always" Width="500px">
+                <ManeuverEdit CardClosed="ManeuverEditClosed" SelectedManeuver="selectedManeuver" CloseAfterSave="true"/>
+            </MudDrawer>
+        </MudPaper>
+    </MudOverlay>
+
+@code {
+    private bool maneuverEditOpen { get; set; }
+    private Maneuver? selectedManeuver { get; set; }
+    private Maneuver? focusedManeuver { get; set; }
+    private string search { get; set; }
+    private IEnumerable<Maneuver> Maneuvers = new List<Maneuver>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Maneuvers = await db.GetManeuversAsync();
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<Maneuver> tableRowClickEventArgs)
+    {
+        if (focusedManeuver == null || focusedManeuver != tableRowClickEventArgs.Item)
+        {
+            focusedManeuver = tableRowClickEventArgs.Item;
+        }
+        else
+        {
+            focusedManeuver = null;
+        }
+    }
+
+    private string SelectedRowClassFunc(Maneuver maneuver, int rowNumber)
+    {
+        if (maneuver == focusedManeuver)
+        {
+            return "blue text-blue darken-3";
+        }
+        return "";
+    }
+
+    private bool ManeuverFilter(Maneuver maneuver) => ManeuverSearch(maneuver, search);
+
+    private bool ManeuverSearch(Maneuver maneuver, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (maneuver.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task NewManeuverClicked()
+    {
+        selectedManeuver = new();
+        selectedManeuver = await db.UpdateManeuver(selectedManeuver);
+        maneuverEditOpen = true;
+    }
+
+    private void ManeuverEditClicked(Maneuver maneuver)
+    {
+        selectedManeuver = maneuver;
+        maneuverEditOpen = true;
+    }
+
+    private async Task ManeuverDeleteClicked(Maneuver maneuver)
+    {
+        await db.DeleteManeuver(maneuver);
+        Maneuvers = await db.GetManeuversAsync();
+    }
+
+    private async Task ManeuverEditClosed()
+    {
+        Maneuvers = await db.GetManeuversAsync();
+        maneuverEditOpen = false;
+    }
+}

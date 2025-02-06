@@ -26,6 +26,8 @@ namespace MasterAdvantage.Data
         public DbSet<Spell> Spells { get; set; }
         public DbSet<SpellEnhancement> SpellEnhancements { get; set; }
         public DbSet<CombatAction> Actions { get; set; }
+        public DbSet<Maneuver> Maneuvers { get; set; }
+        public DbSet<ManeuverEnhancement> ManeuverEnhancements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

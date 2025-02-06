@@ -32,5 +32,6 @@
 
         public List<Weapon> Weapons { get; set; } = new();
         public List<Spell> Spells { get; set; } = new();
+        public List<Maneuver> Maneuvers { get; set; } = new();
     }
 }

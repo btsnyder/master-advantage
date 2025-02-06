@@ -1,0 +1,85 @@
+﻿@inject DBService db
+
+<MudText Typo="Typo.h4" Class="mt-2">Maneuvers</MudText>
+<div class="d-flex my-2 gap-2">
+    <MudAutocomplete T="Maneuver" Label="Search" @bind-Value="selectedManeuver" SearchFunc="@ManeuverSearch" ToStringFunc="s => s?.Name" Clearable ResetValueOnEmptyText />
+    <MudIconButton Class="my-auto" Icon="@Icons.Material.Filled.Add" Disabled="@(selectedManeuver == null)" OnClick="AddSelectedManeuver" Variant="Variant.Filled" Color="Color.Success" />
+    <MudSpacer />
+    <MudSpacer />
+</div>
+<MudTable T="Maneuver" Items="Item.Creature.Maneuvers" OnRowClick="RowClickEvent" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc">
+    <ColGroup>
+        <col />
+        <col />
+        <col />
+        <col width="50px" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Cost</MudTh>
+        <MudTh>Category</MudTh>
+        <MudTh />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Dmg">@context.GetCost()</MudTd>
+        <MudTd DataLabel="Category">@context.Category</MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="() => Item.Creature.Maneuvers.Remove(context)" />
+        </MudTd>
+    </RowTemplate>
+    <ChildRowContent>
+        @if (focusedManeuver == context)
+        {
+            <td colspan="7">
+                <MudText Class="ma-2">@Helpers.GetMarkdown(context.Description)</MudText>
+                <MudText Class="ma-2">Enhancements</MudText>
+                @foreach(var enhancement in context.Enhancements)
+                {
+                    <MudText Class="ma-2">@Helpers.GetMarkdown(string.Format("***{0}***: ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
+                }
+            </td>
+        }
+    </ChildRowContent>
+</MudTable>
+
+@code {
+    private Maneuver? focusedManeuver { get; set; }
+    private Maneuver? selectedManeuver { get; set; }
+
+    [Parameter] public EncounterItem Item { get; set; }
+
+    private async Task<IEnumerable<Maneuver>> ManeuverSearch(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return await db.GetManeuversAsync();
+        return await db.SearchManeuversAsync(value);
+    }
+
+    private void AddSelectedManeuver()
+    {
+        Item.Creature.Maneuvers.Add(selectedManeuver!);
+        selectedManeuver = null;
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<Maneuver> tableRowClickEventArgs)
+    {
+        if (focusedManeuver == null || focusedManeuver != tableRowClickEventArgs.Item)
+        {
+            focusedManeuver = tableRowClickEventArgs.Item;
+        }
+        else
+        {
+            focusedManeuver = null;
+        }
+    }
+
+    private string SelectedRowClassFunc(Maneuver maneuver, int rowNumber)
+    {
+        if (maneuver == focusedManeuver)
+        {
+            return "blue text-blue darken-3";
+        }
+        return "";
+    }
+}

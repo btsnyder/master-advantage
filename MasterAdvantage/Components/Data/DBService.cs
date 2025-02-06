@@ -26,6 +26,7 @@ namespace MasterAdvantage.Data
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.WeaponProperties)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.Style)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Spells).ThenInclude(s => s.Enhancements)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Maneuvers).ThenInclude(t => t.Enhancements)
                 .First(e => e.Id == id);
             foreach (var i in encounter.Items)
             {
@@ -42,6 +43,7 @@ namespace MasterAdvantage.Data
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.WeaponProperties)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Weapons).ThenInclude(w => w.Style)
                 .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Spells).ThenInclude(s => s.Enhancements)
+                .Include(e => e.Items).ThenInclude(i => i.Creature).ThenInclude(c => c.Maneuvers).ThenInclude(t => t.Enhancements)
                 .ToList();
         }
 
@@ -191,12 +193,12 @@ namespace MasterAdvantage.Data
 
         public async Task<List<Weapon>> GetWeaponsAsync()
         {
-            return await dbContext.Weapons.ToListAsync();
+            return await dbContext.Weapons.OrderBy(w => w.Name).ToListAsync();
         }
 
         public async Task<List<Weapon>> SearchWeaponsAsync(string name)
         {
-            return await dbContext.Weapons.Where(w => w.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            return await dbContext.Weapons.Where(w => w.Name.ToLower().Contains(name.ToLower())).OrderBy(w => w.Name).ToListAsync();
         }
 
         public async Task<WeaponStyle> UpdateWeaponStyleAsync(WeaponStyle style)
@@ -326,6 +328,71 @@ namespace MasterAdvantage.Data
             dbContext.Actions.Update(action);
             await dbContext.SaveChangesAsync();
             return action;
+        }
+
+        public async Task<List<Maneuver>> GetManeuversAsync()
+        {
+            return await dbContext.Maneuvers.OrderBy(m => m.Category).ThenBy(s => s.Name).Include(s => s.Enhancements).ToListAsync();
+        }
+
+        public async Task<List<Maneuver>> SearchManeuversAsync(string name)
+        {
+            return await dbContext.Maneuvers.Where(s => s.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+        }
+
+        public async Task DeleteManeuverEnhancementAsync(ManeuverEnhancement enhancement)
+        {
+            try
+            {
+                dbContext.ManeuverEnhancements.Remove(enhancement);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ManeuverEnhancement> UpdateManeuverEnhancement(ManeuverEnhancement enhancement)
+        {
+            try
+            {
+                dbContext.ManeuverEnhancements.Update(enhancement);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return enhancement;
+        }
+
+        public async Task<Maneuver> UpdateManeuver(Maneuver maneuver)
+        {
+            EntityEntry<Maneuver> entityManeuver;
+            try
+            {
+                entityManeuver = dbContext.Maneuvers.Update(maneuver);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return entityManeuver.Entity;
+        }
+
+        public async Task DeleteManeuver(Maneuver maneuver)
+        {
+            try
+            { 
+                dbContext.Maneuvers.Remove(maneuver);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #endregion
     }

@@ -3,6 +3,7 @@ using System;
 using MasterAdvantage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterAdvantage.Migrations
 {
     [DbContext(typeof(MasterAdvantageContext))]
-    partial class MasterAdvantageContextModelSnapshot : ModelSnapshot
+    [Migration("20250205213357_AddTechinqueDb")]
+    partial class AddTechinqueDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -235,69 +238,6 @@ namespace MasterAdvantage.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Maneuver", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Category")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("CreatureId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SP")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatureId");
-
-                    b.ToTable("Maneuvers");
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.ManeuverEnhancement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AP")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ManeuverId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SP")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ManeuverId");
-
-                    b.ToTable("ManeuverEnhancements");
-                });
-
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
                 {
                     b.Property<Guid>("Id")
@@ -367,6 +307,66 @@ namespace MasterAdvantage.Migrations
                     b.HasIndex("SpellId");
 
                     b.ToTable("SpellEnhancements");
+                });
+
+            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Technique", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AP")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("CreatureId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SP")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatureId");
+
+                    b.ToTable("Techniques");
+                });
+
+            modelBuilder.Entity("MasterAdvantage.Shared.Entities.TechniqueEnhancement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AP")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SP")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("TechniqueId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TechniqueId");
+
+                    b.ToTable("TechniqueEnhancements");
                 });
 
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Trade", b =>
@@ -623,24 +623,6 @@ namespace MasterAdvantage.Migrations
                     b.Navigation("Encounter");
                 });
 
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Maneuver", b =>
-                {
-                    b.HasOne("MasterAdvantage.Shared.Entities.Creature", null)
-                        .WithMany("Maneuvers")
-                        .HasForeignKey("CreatureId");
-                });
-
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.ManeuverEnhancement", b =>
-                {
-                    b.HasOne("MasterAdvantage.Shared.Entities.Maneuver", "Maneuver")
-                        .WithMany("Enhancements")
-                        .HasForeignKey("ManeuverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Maneuver");
-                });
-
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
                 {
                     b.HasOne("MasterAdvantage.Shared.Entities.Creature", null)
@@ -657,6 +639,24 @@ namespace MasterAdvantage.Migrations
                         .IsRequired();
 
                     b.Navigation("Spell");
+                });
+
+            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Technique", b =>
+                {
+                    b.HasOne("MasterAdvantage.Shared.Entities.Creature", null)
+                        .WithMany("Techniques")
+                        .HasForeignKey("CreatureId");
+                });
+
+            modelBuilder.Entity("MasterAdvantage.Shared.Entities.TechniqueEnhancement", b =>
+                {
+                    b.HasOne("MasterAdvantage.Shared.Entities.Technique", "Technique")
+                        .WithMany("Enhancements")
+                        .HasForeignKey("TechniqueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Technique");
                 });
 
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Trade", b =>
@@ -703,17 +703,17 @@ namespace MasterAdvantage.Migrations
 
             modelBuilder.Entity("MasterAdvantage.Shared.Entities.Creature", b =>
                 {
-                    b.Navigation("Maneuvers");
-
                     b.Navigation("Spells");
+
+                    b.Navigation("Techniques");
                 });
 
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Maneuver", b =>
+            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
                 {
                     b.Navigation("Enhancements");
                 });
 
-            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Spell", b =>
+            modelBuilder.Entity("MasterAdvantage.Shared.Entities.Technique", b =>
                 {
                     b.Navigation("Enhancements");
                 });

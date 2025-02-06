@@ -1,0 +1,28 @@
+<MudTextField @bind-Value="search" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" 
+        Variant="Variant.Outlined" Class="mt-2" DebounceInterval="500"/>
+<MudExpansionPanels Elevation="0">
+@foreach(Maneuver maneuver in Item.Creature.Maneuvers.OrderBy(s => s.Name).Where(s => s.Name.ToLower().Contains(search.ToLower())))
+{
+    <MudExpansionPanel Text="@maneuver.Name">
+        <MudText Typo="Typo.body2"><strong>@($"Cost: {maneuver.GetCost()}")</strong></MudText>
+        <MudText Typo="Typo.body2"><strong>@($"Category: {maneuver.Category}")</strong></MudText>
+        <MudText Typo="Typo.body2">@Helpers.GetMarkdown(maneuver.Description)</MudText>
+        @if (maneuver.Enhancements.Count > 0)
+        {
+            <MudText Typo="Typo.h6" Class="my-2">Enhancements</MudText>
+            <MudDivider />
+            @foreach (var enhancement in maneuver.Enhancements)
+            {
+                <div class="my-2">        
+                    <MudText Typo="Typo.body2">@Helpers.GetMarkdown(string.Format(" ***{0}:*** ({1}) {2}", enhancement.Name, enhancement.GetCost(), enhancement.Description))</MudText>
+                </div>
+            }
+        }
+    </MudExpansionPanel>
+}
+</MudExpansionPanels>
+
+@code {
+    private string search { get; set; } = "";
+    [Parameter] public EncounterItem Item { get; set; }
+}

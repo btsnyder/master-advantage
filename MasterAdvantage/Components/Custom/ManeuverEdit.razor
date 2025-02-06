@@ -1,0 +1,116 @@
+﻿@inject DBService db
+
+<MudCard Style="height: 100%">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h3">Maneuvers</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="() => CardClosed.InvokeAsync()" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <div class="d-flex my-2">
+            @if (SelectedManeuver == null)
+            {
+                <MudAutocomplete T="Maneuver" Label="Maneuver" @bind-Value="SelectedManeuver" SearchFunc="@ManeuverSearch" Clearable="true" ToStringFunc="s => s?.Name" />
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="CreateManeuver" Variant="Variant.Filled" Color="Color.Success" />
+            }
+           
+        </div>
+        @if (SelectedManeuver != null)
+        {
+            <MudTextField @bind-Value=SelectedManeuver.Name Label="Name" Variant="Variant.Outlined" />
+            <div class="d-flex mb-2 gap-2">
+                <MudNumericField Label="AP" @bind-Value=SelectedManeuver.AP Variant="Variant.Outlined" />
+                <MudNumericField Label="SP" @bind-Value=SelectedManeuver.SP Variant="Variant.Outlined" />
+            </div>
+            <MudSelect T="ManeuverCategory" Label="Category" AnchorOrigin="Origin.BottomCenter" Class="me-2" @bind-Value=SelectedManeuver.Category Variant="Variant.Outlined">
+                @foreach (ManeuverCategory category in Enum.GetValues(typeof(ManeuverCategory)))
+                {
+                    <MudSelectItem Value="category" Disabled="@(category == SelectedManeuver.Category)">@category</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField @bind-Value=SelectedManeuver.Description Label="Description" Class="mb-2" Lines="15" Variant="Variant.Outlined" />
+            <div class="d-flex">
+                <MudText Class="my-auto">Enhancements</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => editEnhancement = new()" Class="my-auto" Variant="Variant.Filled" Color="Color.Success">+</MudIconButton>
+            </div>
+            @if (SelectedManeuver.Enhancements != null)
+            {
+                <div class="d-flex flex-wrap">
+                    @foreach (var enhancement in SelectedManeuver.Enhancements)
+                    {
+                        <MudChip T="string" Color="Color.Primary" OnClick="() => editEnhancement = enhancement" OnClose="() => RemoveEnhancement(enhancement)">@enhancement.Name</MudChip>
+                    }
+                </div>
+            }
+            @if (editEnhancement != null)
+            {
+                <MudTextField autocomplete="off" @bind-Value=editEnhancement.Name Variant="Variant.Outlined" Label="Name" Placeholder="New Enhancement" />
+                <div class="d-flex gap-2">
+                    <MudNumericField Label="AP" @bind-Value=editEnhancement.AP Variant="Variant.Outlined" />
+                    <MudNumericField Label="SP" @bind-Value=editEnhancement.SP Variant="Variant.Outlined" />
+                </div>
+                <MudTextField autocomplete="off" @bind-Value=editEnhancement.Description Variant="Variant.Outlined" Label="Description" Lines="3" />
+                <MudButton OnClick="AddManeuverEnhancement" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+            }
+        }
+    </MudCardContent>
+    <MudCardActions>
+        @if (SelectedManeuver != null)
+        {
+            <MudButton OnClick="SaveManeuver" FullWidth="true" Color="Color.Success" Variant="Variant.Filled">Save</MudButton>
+        }
+    </MudCardActions>
+</MudCard>
+
+@code {
+    private ManeuverEnhancement? editEnhancement { get; set; }
+    [Parameter] public EventCallback CardClosed { get; set; }
+    [Parameter] public Maneuver? SelectedManeuver { get; set; }
+    [Parameter] public bool CloseAfterSave { get; set;}
+
+
+    private async Task<IEnumerable<Maneuver>> ManeuverSearch(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return await db.GetManeuversAsync();
+        return await db.SearchManeuversAsync(value);
+    }
+
+    private async Task AddManeuverEnhancement()
+    {
+        if (!SelectedManeuver!.Enhancements.Contains(editEnhancement!))
+        {
+            SelectedManeuver!.Enhancements.Add(editEnhancement!);
+            editEnhancement!.ManeuverId = SelectedManeuver.Id;
+        }
+        await db.UpdateManeuverEnhancement(editEnhancement!);
+        editEnhancement = null;
+    }
+
+    private async Task SaveManeuver()
+    {
+        await db.UpdateManeuver(SelectedManeuver!);
+        SelectedManeuver = null;
+        if (CloseAfterSave)
+        {
+            await CardClosed.InvokeAsync();
+        }
+    }
+
+    private async Task RemoveEnhancement(ManeuverEnhancement enhancement)
+    {
+        SelectedManeuver!.Enhancements.Remove(enhancement);
+        await db.DeleteManeuverEnhancementAsync(enhancement);
+    }
+
+    private async Task CreateManeuver()
+    {
+        SelectedManeuver = new();
+        SelectedManeuver = await db.UpdateManeuver(SelectedManeuver);
+    }
+}
