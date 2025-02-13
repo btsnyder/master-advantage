@@ -1,0 +1,57 @@
+<div class="d-flex gap-2 mb-3">
+    <MudTextField Class="my-auto" @bind-Value="currency" Variant="Variant.Outlined" Label="Currency" HelperTextOnFocus="true" HelperText="@($"{Item.Creature.Currency.ToString()} {currency}")" 
+        AdornmentText="Maize" Adornment="Adornment.End" Immediate="false"/>
+    <MudButton Class="mb-6" Variant="Variant.Filled" Color="Color.Info" OnClick="CurrencyChanged">Enter</MudButton>
+</div>
+
+<div class="d-flex gap-2">
+    <MudButton FullWidth Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => Item.Creature.Items.Add(new()))">New Item</MudButton>
+    <MudToggleIconButton @bind-Toggled="edit" Color="Color.Info" ToggledColor="Color.Error" Icon="@Icons.Material.Filled.Edit" ToggledIcon="@Icons.Material.Filled.Cancel"/>
+</div>
+<MudTable Items="Item.Creature.Items" Breakpoint="Breakpoint.Md">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Quantity</MudTh>
+        <MudTh />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="context.Name" />
+        </MudTd>
+        <MudTd DataLabel="Description" HideSmall=true>
+            <MudTextField @bind-Value="context.Description" />
+        </MudTd>
+        <MudTd DataLabel="Quantity">
+            <MudNumericField @bind-Value="context.Quantity"/>
+        </MudTd>
+        <MudTd>
+            @if (edit) {
+                <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" FullWidth OnClick="@(() => Item.Creature.Items.Remove(context))">DELETE</MudButton>
+            }
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private bool edit;
+    private string currency = "";
+    [Parameter] public EncounterItem Item { get; set; } = new();
+
+    void CurrencyChanged()
+    {
+        int newValue = 0;
+        bool isInt = int.TryParse(currency, out newValue);
+        if (!isInt || newValue == Item.Creature.Currency) {
+            return;
+        }
+        else if (currency.StartsWith('+') || currency.StartsWith('-')) {
+            Item.Creature.Currency += newValue;
+        }
+        else {
+            Item.Creature.Currency = newValue;
+        }
+        currency = Item.Creature.Currency.ToString();
+        StateHasChanged();
+    }
+}
