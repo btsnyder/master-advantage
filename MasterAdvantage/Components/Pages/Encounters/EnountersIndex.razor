@@ -160,7 +160,8 @@
     {
         if (encounter.ChangeId != Guid.Empty)
         {
-            if (encounter.ChangeId == currentChange) return;
+            Guid savedChangeId = db.GetEncounterChangeId(encounter.Id);
+            if (savedChangeId == currentChange) return;
         }
         if (encounter.Id == Guid.Empty)
             encounter = db.GetEncounters().First();
